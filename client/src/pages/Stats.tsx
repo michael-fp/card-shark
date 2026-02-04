@@ -86,7 +86,7 @@ export default function Stats() {
                 <StatCard
                     icon={<Star className="w-5 h-5" />}
                     label="Avg Grade"
-                    value={overview.avgGrade ? overview.avgGrade.toFixed(1) : '—'}
+                    value={overview.avgGrade != null ? String(typeof overview.avgGrade === 'number' ? overview.avgGrade.toFixed(1) : overview.avgGrade) : '—'}
                     color="text-amber-500"
                     delay={0.1}
                 />
@@ -223,7 +223,7 @@ export default function Stats() {
                                         </div>
                                     </div>
                                     <p className="text-sm font-medium text-ig-text truncate">{card.player_name}</p>
-                                    <p className="text-sm text-ig-success">${card.value?.toFixed(2)}</p>
+                                    <p className="text-sm text-ig-success">${card.value != null ? Number(card.value).toFixed(2) : '0.00'}</p>
                                 </div>
                             );
                         })}
@@ -248,7 +248,7 @@ export default function Stats() {
                             >
                                 <p className="text-xs text-ig-text-muted">{item.year}</p>
                                 <p className="text-sm font-semibold text-ig-text">{item.count}</p>
-                                <p className="text-xs text-ig-success">${item.totalValue?.toFixed(0)}</p>
+                                <p className="text-xs text-ig-success">${item.totalValue != null ? Number(item.totalValue).toFixed(0) : '0'}</p>
                             </div>
                         ))}
                     </div>

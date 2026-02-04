@@ -47,6 +47,12 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 // Serve uploaded images - try filesystem first (for local dev), fallback to database (for Railway)
 app.use('/uploads', express.static(join(__dirname, 'uploads')));
 
+// Fallback for /uploads when file not found on filesystem - redirect to database-backed route
+app.use('/uploads/:filename', (req, res, next) => {
+    // File not found on filesystem, try database
+    return res.redirect(`/api/images/${req.params.filename}`);
+});
+
 // Database-backed image serving (for when filesystem is ephemeral)
 app.use('/api/images', imagesRoutes);
 
