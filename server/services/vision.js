@@ -165,77 +165,117 @@ const parseCardText = (rawText, logos) => {
     const sets = ['Prizm', 'Chrome', 'Optic', 'Select', 'Mosaic', 'National Treasures', 'Contenders', 'Magicians', 'Allure', 'Finest', 'Heritage', 'Archives', 'Stadium Club'];
     const detectedSet = sets.find(s => text.includes(s.toLowerCase()));
 
-    // Try to extract team from logos (logos often contain full team names like "Detroit Red Wings")
-    // Logos are more reliable than OCR text, so always check them and let them override
+    // Full team names with city for better matching (maps to display name and sport)
+    const fullTeamNames = {
+        // NHL
+        'detroit red wings': { display: 'Detroit Red Wings', sport: 'Hockey' },
+        'boston bruins': { display: 'Boston Bruins', sport: 'Hockey' },
+        'chicago blackhawks': { display: 'Chicago Blackhawks', sport: 'Hockey' },
+        'montreal canadiens': { display: 'Montreal Canadiens', sport: 'Hockey' },
+        'toronto maple leafs': { display: 'Toronto Maple Leafs', sport: 'Hockey' },
+        'new york rangers': { display: 'New York Rangers', sport: 'Hockey' },
+        'pittsburgh penguins': { display: 'Pittsburgh Penguins', sport: 'Hockey' },
+        'philadelphia flyers': { display: 'Philadelphia Flyers', sport: 'Hockey' },
+        'edmonton oilers': { display: 'Edmonton Oilers', sport: 'Hockey' },
+        'colorado avalanche': { display: 'Colorado Avalanche', sport: 'Hockey' },
+        'tampa bay lightning': { display: 'Tampa Bay Lightning', sport: 'Hockey' },
+        'vegas golden knights': { display: 'Vegas Golden Knights', sport: 'Hockey' },
+        'carolina hurricanes': { display: 'Carolina Hurricanes', sport: 'Hockey' },
+        'washington capitals': { display: 'Washington Capitals', sport: 'Hockey' },
+        'florida panthers': { display: 'Florida Panthers', sport: 'Hockey' },
+        // MLB
+        'boston red sox': { display: 'Boston Red Sox', sport: 'Baseball' },
+        'new york yankees': { display: 'New York Yankees', sport: 'Baseball' },
+        'los angeles dodgers': { display: 'Los Angeles Dodgers', sport: 'Baseball' },
+        'chicago cubs': { display: 'Chicago Cubs', sport: 'Baseball' },
+        'san francisco giants': { display: 'San Francisco Giants', sport: 'Baseball' },
+        'st. louis cardinals': { display: 'St. Louis Cardinals', sport: 'Baseball' },
+        'atlanta braves': { display: 'Atlanta Braves', sport: 'Baseball' },
+        'houston astros': { display: 'Houston Astros', sport: 'Baseball' },
+        'philadelphia phillies': { display: 'Philadelphia Phillies', sport: 'Baseball' },
+        'texas rangers': { display: 'Texas Rangers', sport: 'Baseball' },
+        'new york mets': { display: 'New York Mets', sport: 'Baseball' },
+        'chicago white sox': { display: 'Chicago White Sox', sport: 'Baseball' },
+        // NBA
+        'los angeles lakers': { display: 'Los Angeles Lakers', sport: 'Basketball' },
+        'boston celtics': { display: 'Boston Celtics', sport: 'Basketball' },
+        'chicago bulls': { display: 'Chicago Bulls', sport: 'Basketball' },
+        'golden state warriors': { display: 'Golden State Warriors', sport: 'Basketball' },
+        'miami heat': { display: 'Miami Heat', sport: 'Basketball' },
+        'san antonio spurs': { display: 'San Antonio Spurs', sport: 'Basketball' },
+        'milwaukee bucks': { display: 'Milwaukee Bucks', sport: 'Basketball' },
+        'phoenix suns': { display: 'Phoenix Suns', sport: 'Basketball' },
+        'dallas mavericks': { display: 'Dallas Mavericks', sport: 'Basketball' },
+        'brooklyn nets': { display: 'Brooklyn Nets', sport: 'Basketball' },
+        'denver nuggets': { display: 'Denver Nuggets', sport: 'Basketball' },
+        // NFL
+        'dallas cowboys': { display: 'Dallas Cowboys', sport: 'Football' },
+        'new england patriots': { display: 'New England Patriots', sport: 'Football' },
+        'green bay packers': { display: 'Green Bay Packers', sport: 'Football' },
+        'pittsburgh steelers': { display: 'Pittsburgh Steelers', sport: 'Football' },
+        'kansas city chiefs': { display: 'Kansas City Chiefs', sport: 'Football' },
+        'san francisco 49ers': { display: 'San Francisco 49ers', sport: 'Football' },
+        'philadelphia eagles': { display: 'Philadelphia Eagles', sport: 'Football' },
+        'buffalo bills': { display: 'Buffalo Bills', sport: 'Football' },
+        'baltimore ravens': { display: 'Baltimore Ravens', sport: 'Football' },
+    };
+
+    // Function to find best team match from a string, returns { team, sport, score }
+    const findBestTeamMatch = (inputStr) => {
+        if (!inputStr) return null;
+        const input = inputStr.toLowerCase();
+        let bestMatch = null;
+        let bestScore = 0;
+
+        for (const [teamKey, info] of Object.entries(fullTeamNames)) {
+            // Check if input contains the full team name (best match)
+            if (input.includes(teamKey)) {
+                const score = teamKey.length; // Longer match = better score
+                if (score > bestScore) {
+                    bestScore = score;
+                    bestMatch = { team: info.display, sport: info.sport, score };
+                }
+            }
+            // Check if team name contains input (partial match)
+            else if (teamKey.includes(input) && input.length > 3) {
+                const score = input.length * 0.8; // Slightly lower score for partial
+                if (score > bestScore) {
+                    bestScore = score;
+                    bestMatch = { team: info.display, sport: info.sport, score };
+                }
+            }
+        }
+        return bestMatch;
+    };
+
+    // Find best match from OCR text
+    const ocrMatch = findBestTeamMatch(text);
+
+    // Find best match from logos
+    let logoMatch = null;
     if (logos && logos.length > 0) {
-        // Map of logo names to team names and sports
-        const logoTeamMap = {
-            // NHL
-            'Detroit Red Wings': { team: 'Red Wings', sport: 'Hockey' },
-            'Boston Bruins': { team: 'Bruins', sport: 'Hockey' },
-            'Chicago Blackhawks': { team: 'Blackhawks', sport: 'Hockey' },
-            'Montreal Canadiens': { team: 'Canadiens', sport: 'Hockey' },
-            'Toronto Maple Leafs': { team: 'Maple Leafs', sport: 'Hockey' },
-            'New York Rangers': { team: 'Rangers', sport: 'Hockey' },
-            'Pittsburgh Penguins': { team: 'Penguins', sport: 'Hockey' },
-            'Philadelphia Flyers': { team: 'Flyers', sport: 'Hockey' },
-            'Edmonton Oilers': { team: 'Oilers', sport: 'Hockey' },
-            'Colorado Avalanche': { team: 'Avalanche', sport: 'Hockey' },
-            'Tampa Bay Lightning': { team: 'Lightning', sport: 'Hockey' },
-            'Vegas Golden Knights': { team: 'Golden Knights', sport: 'Hockey' },
-            // MLB
-            'Boston Red Sox': { team: 'Red Sox', sport: 'Baseball' },
-            'New York Yankees': { team: 'Yankees', sport: 'Baseball' },
-            'Los Angeles Dodgers': { team: 'Dodgers', sport: 'Baseball' },
-            'Chicago Cubs': { team: 'Cubs', sport: 'Baseball' },
-            'San Francisco Giants': { team: 'Giants', sport: 'Baseball' },
-            'St. Louis Cardinals': { team: 'Cardinals', sport: 'Baseball' },
-            'Atlanta Braves': { team: 'Braves', sport: 'Baseball' },
-            'Houston Astros': { team: 'Astros', sport: 'Baseball' },
-            'Philadelphia Phillies': { team: 'Phillies', sport: 'Baseball' },
-            'Texas Rangers': { team: 'Rangers', sport: 'Baseball' },
-            // NBA
-            'Los Angeles Lakers': { team: 'Lakers', sport: 'Basketball' },
-            'Boston Celtics': { team: 'Celtics', sport: 'Basketball' },
-            'Chicago Bulls': { team: 'Bulls', sport: 'Basketball' },
-            'Golden State Warriors': { team: 'Warriors', sport: 'Basketball' },
-            'Miami Heat': { team: 'Heat', sport: 'Basketball' },
-            'San Antonio Spurs': { team: 'Spurs', sport: 'Basketball' },
-            'Milwaukee Bucks': { team: 'Bucks', sport: 'Basketball' },
-            'Phoenix Suns': { team: 'Suns', sport: 'Basketball' },
-            'Dallas Mavericks': { team: 'Mavericks', sport: 'Basketball' },
-            // NFL
-            'Dallas Cowboys': { team: 'Cowboys', sport: 'Football' },
-            'New England Patriots': { team: 'Patriots', sport: 'Football' },
-            'Green Bay Packers': { team: 'Packers', sport: 'Football' },
-            'Pittsburgh Steelers': { team: 'Steelers', sport: 'Football' },
-            'Kansas City Chiefs': { team: 'Chiefs', sport: 'Football' },
-            'San Francisco 49ers': { team: '49ers', sport: 'Football' },
-            'Philadelphia Eagles': { team: 'Eagles', sport: 'Football' },
-        };
-
         for (const logo of logos) {
-            // Check for exact match first
-            if (logoTeamMap[logo]) {
-                detectedTeam = logoTeamMap[logo].team;
-                if (sport === 'Unknown') {
-                    sport = logoTeamMap[logo].sport;
-                }
-                break;
+            const match = findBestTeamMatch(logo);
+            if (match && (!logoMatch || match.score > logoMatch.score)) {
+                logoMatch = match;
             }
+        }
+    }
 
-            // Try partial match - logo might contain team name
-            for (const [logoName, info] of Object.entries(logoTeamMap)) {
-                if (logo.toLowerCase().includes(logoName.toLowerCase()) ||
-                    logoName.toLowerCase().includes(logo.toLowerCase())) {
-                    detectedTeam = info.team;
-                    if (sport === 'Unknown') {
-                        sport = info.sport;
-                    }
-                    break;
-                }
-            }
-            if (detectedTeam) break;
+    // Compare OCR and logo matches, pick the one with highest score
+    let bestTeamMatch = null;
+    if (ocrMatch && logoMatch) {
+        bestTeamMatch = ocrMatch.score >= logoMatch.score ? ocrMatch : logoMatch;
+        console.log(`🏆 Team match: OCR score=${ocrMatch.score}, Logo score=${logoMatch.score}, Using: ${bestTeamMatch.team}`);
+    } else {
+        bestTeamMatch = logoMatch || ocrMatch;
+    }
+
+    // Apply the best team match
+    if (bestTeamMatch) {
+        detectedTeam = bestTeamMatch.team;
+        if (sport === 'Unknown') {
+            sport = bestTeamMatch.sport;
         }
     }
 
