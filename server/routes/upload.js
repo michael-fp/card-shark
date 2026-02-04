@@ -134,14 +134,23 @@ router.post('/image', upload.single('image'), asyncHandler(async (req, res) => {
                 console.log('📝 Extracted text result:', extractedText);
 
                 if (extractedText) {
-                    // Search eBay for matching cards
-                    console.log('🔎 Searching eBay...');
-                    const ebayResults = await searchCards(extractedText);
-                    console.log('🛒 eBay results count:', ebayResults?.length || 0);
+                    // Try eBay search (optional - don't fail if it doesn't work)
+                    let ebayResults = [];
+                    try {
+                        console.log('🔎 Searching eBay...');
+                        ebayResults = await searchCards(extractedText);
+                        console.log('🛒 eBay results count:', ebayResults?.length || 0);
+                    } catch (ebayError) {
+                        console.warn('⚠️ eBay search failed (optional):', ebayError.message);
+                        // Continue without eBay results
+                    }
 
-                    // Run matching algorithm
+                    // Run matching algorithm with Vision data (eBay optional)
                     matchResult = await matchCard(extractedText, ebayResults);
                     console.log('✅ Match result:', matchResult);
+
+                    // Always include the extracted Vision data even if no eBay match
+                    matchResult.visionData = extractedText;
                 } else {
                     console.log('⚠️ No text extracted from image');
                     matchResult = { error: 'No text detected', message: 'Could not extract text from image' };
