@@ -47,8 +47,14 @@ router.use(authenticate);
  * Get current storage usage
  */
 router.get('/storage', asyncHandler(async (req, res) => {
+    // Ensure row exists
+    await query(`
+        INSERT INTO storage_usage (current_bytes) 
+        SELECT 0 WHERE NOT EXISTS (SELECT 1 FROM storage_usage)
+    `);
+
     const result = await query('SELECT current_bytes FROM storage_usage LIMIT 1');
-    const currentBytes = result.rows[0]?.current_bytes || 0;
+    const currentBytes = parseInt(result.rows[0]?.current_bytes || '0', 10);
 
     res.json({
         used: currentBytes,
@@ -71,9 +77,14 @@ router.post('/image', upload.single('image'), asyncHandler(async (req, res) => {
 
     const { runMatching = 'true' } = req.body;
 
-    // Check storage limit
+    // Check storage limit (ensure row exists first)
+    await query(`
+        INSERT INTO storage_usage (current_bytes) 
+        SELECT 0 WHERE NOT EXISTS (SELECT 1 FROM storage_usage)
+    `);
+
     const storageResult = await query('SELECT current_bytes FROM storage_usage LIMIT 1');
-    const currentBytes = storageResult.rows[0]?.current_bytes || 0;
+    const currentBytes = parseInt(storageResult.rows[0]?.current_bytes || '0', 10);
 
     if (currentBytes >= STORAGE_MAX_BYTES) {
         return res.status(507).json({
@@ -100,7 +111,7 @@ router.post('/image', upload.single('image'), asyncHandler(async (req, res) => {
     // Save to disk
     await fs.writeFile(filePath, processedImage);
 
-    // Update storage usage
+    // Update storage usage (use a single row update)
     const newBytes = currentBytes + processedImage.length;
     await query(
         'UPDATE storage_usage SET current_bytes = $1, last_updated = NOW()',
