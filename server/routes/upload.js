@@ -119,33 +119,48 @@ router.post('/image', upload.single('image'), asyncHandler(async (req, res) => {
     let matchResult = null;
 
     if (runMatching === 'true') {
+        console.log('🔍 Starting card matching flow...');
+
         // Check API limit
         const canUseVision = await canMakeApiCall('google_vision');
+        console.log('📊 Can use Vision API:', canUseVision);
 
         if (canUseVision) {
             try {
                 // Extract text from card image
+                console.log('👁️ Calling Vision API...');
                 const extractedText = await extractCardText(processedImage);
                 await incrementApiUsage('google_vision');
+                console.log('📝 Extracted text result:', extractedText);
 
                 if (extractedText) {
                     // Search eBay for matching cards
+                    console.log('🔎 Searching eBay...');
                     const ebayResults = await searchCards(extractedText);
+                    console.log('🛒 eBay results count:', ebayResults?.length || 0);
 
                     // Run matching algorithm
                     matchResult = await matchCard(extractedText, ebayResults);
+                    console.log('✅ Match result:', matchResult);
+                } else {
+                    console.log('⚠️ No text extracted from image');
+                    matchResult = { error: 'No text detected', message: 'Could not extract text from image' };
                 }
             } catch (error) {
-                console.error('Card matching error:', error.message);
+                console.error('❌ Card matching error:', error.message);
+                console.error('Stack:', error.stack);
                 // Don't fail the upload, just skip matching
                 matchResult = { error: 'Matching failed', message: error.message };
             }
         } else {
+            console.log('⚠️ API limit reached');
             matchResult = {
                 skipped: true,
                 reason: 'Monthly API limit reached. Please add card details manually.',
             };
         }
+    } else {
+        console.log('ℹ️ Card matching disabled (runMatching =', runMatching, ')');
     }
 
     res.status(201).json({
