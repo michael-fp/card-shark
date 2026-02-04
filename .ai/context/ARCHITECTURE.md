@@ -114,6 +114,15 @@ card-shark/
 | Favorites | Heart/like cards for quick access | ✅ |
 | Active Nav Tabs | Visual indicator for current page | ✅ |
 
+## Vision-First Priority (Matching Ground Truth)
+
+When matching cards, the system prioritizes Vision API data over eBay extraction:
+
+1. **Backend** (`matcher.js`): Uses `visionData.playerName`, `team`, and `grade` as primary source
+2. **Frontend** (`AddCardModal.tsx`): Falls back to `extractedData` if `matchedCard` values are missing
+
+This prevents eBay listing title noise (e.g., "-24 Donruss Magicians") from overriding accurate OCR results.
+
 ## API Routes
 
 ### Cards
