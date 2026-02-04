@@ -29,6 +29,8 @@ describe('Cards API Routes', () => {
                     team: 'Kansas City Chiefs',
                     value: 850.00,
                     grade: 9.5,
+                    is_wishlist: false,
+                    is_favorite: true,
                 },
                 {
                     id: 'card-2',
@@ -38,6 +40,8 @@ describe('Cards API Routes', () => {
                     team: 'Chicago Bulls',
                     value: 12500.00,
                     grade: 8.0,
+                    is_wishlist: false,
+                    is_favorite: false,
                 },
             ];
 
@@ -105,6 +109,24 @@ describe('Cards API Routes', () => {
             expect(res.status).toBe(200);
             expect(res.body.cards).toHaveLength(0);
             expect(res.body.pagination.total).toBe(0);
+        });
+
+        it('should filter cards by favorites', async () => {
+            const mockFavorites = [
+                { id: 'card-1', player_name: 'Patrick Mahomes', is_favorite: true },
+            ];
+
+            query.mockResolvedValueOnce({ rows: mockFavorites });
+            query.mockResolvedValueOnce({ rows: [{ total: '1' }] });
+
+            const res = await request(app).get('/api/cards?isFavorite=true');
+
+            expect(res.status).toBe(200);
+            expect(res.body.cards).toHaveLength(1);
+            expect(query).toHaveBeenCalledWith(
+                expect.stringContaining('is_favorite = $'),
+                expect.arrayContaining([true])
+            );
         });
     });
 

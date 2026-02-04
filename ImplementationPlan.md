@@ -35,7 +35,7 @@
 │                              FRONTEND                                    │
 │                    React + Tailwind (Instagram UI)                       │
 ├─────────────────────────────────────────────────────────────────────────┤
-│  Gallery View  │  Card Modal  │  Filters  │  Stats  │  Wishlist  │ Add  │
+│  Gallery  │  Card Modal  │  Filters  │  Stats  │  Wishlist  │ Favorites │
 └───────────────────────────────┬─────────────────────────────────────────┘
                                 │ HTTPS (Railway)
 ┌───────────────────────────────┴─────────────────────────────────────────┐
@@ -81,6 +81,7 @@ CREATE TABLE cards (
   value DECIMAL(10,2),
   purchase_price DECIMAL(10,2),
   is_wishlist BOOLEAN DEFAULT FALSE,
+  is_favorite BOOLEAN DEFAULT FALSE,
   ebay_item_id VARCHAR(50),
   created_at TIMESTAMP DEFAULT NOW(),
   updated_at TIMESTAMP DEFAULT NOW()
@@ -244,13 +245,18 @@ CREATE TABLE storage_usage (
 
 ---
 
-### Phase 9: Wishlist Feature
-- [ ] Add is_wishlist column handling in API
-- [ ] Create wishlist toggle button on cards
-- [ ] Build dedicated wishlist view/tab
-- [ ] Implement wishlist filter in gallery
-- [ ] Add "Move to Collection" action
-- [ ] Create wishlist empty state
+### Phase 9: Wishlist & Favorites Features
+- [x] Add is_wishlist column handling in API
+- [x] Create wishlist toggle button on cards
+- [x] Build dedicated wishlist view/tab
+- [x] Implement wishlist filter in gallery
+- [x] Add "Move to Collection" action
+- [x] Create wishlist empty state
+- [x] Add is_favorite column to database (migration 004)
+- [x] Create favorites toggle (heart button in CardModal)
+- [x] Implement favorites filter in Gallery and FilterSheet
+- [x] Add active state to navigation tabs (Header.tsx)
+- [x] Cards only added to wishlist via Wishlist tab upload
 
 ---
 

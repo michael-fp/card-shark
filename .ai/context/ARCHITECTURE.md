@@ -111,6 +111,8 @@ card-shark/
 | Image Persistence | Base64 in DB (Railway-safe) | ✅ |
 | Infinite Scroll | Paginated gallery | ✅ |
 | Card Editing | Update card details inline | ✅ |
+| Favorites | Heart/like cards for quick access | ✅ |
+| Active Nav Tabs | Visual indicator for current page | ✅ |
 
 ## API Routes
 
@@ -197,6 +199,7 @@ CREATE TABLE cards (
     value DECIMAL(10,2),
     purchase_price DECIMAL(10,2),
     is_wishlist BOOLEAN DEFAULT false,
+    is_favorite BOOLEAN DEFAULT false,
     ebay_item_id VARCHAR(50),
     created_at TIMESTAMP DEFAULT NOW()
 );

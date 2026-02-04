@@ -39,10 +39,10 @@ describe('Card Utilities', () => {
 
     describe('Card Filtering', () => {
         const testCards = [
-            { id: '1', player_name: 'Michael Jordan', sport: 'Basketball', year: 1986, value: 12500 },
-            { id: '2', player_name: 'Patrick Mahomes', sport: 'Football', year: 2018, value: 850 },
-            { id: '3', player_name: 'Mike Trout', sport: 'Baseball', year: 2011, value: 5000 },
-            { id: '4', player_name: 'LeBron James', sport: 'Basketball', year: 2003, value: 8000 },
+            { id: '1', player_name: 'Michael Jordan', sport: 'Basketball', year: 1986, value: 12500, is_favorite: true, is_wishlist: false },
+            { id: '2', player_name: 'Patrick Mahomes', sport: 'Football', year: 2018, value: 850, is_favorite: false, is_wishlist: false },
+            { id: '3', player_name: 'Mike Trout', sport: 'Baseball', year: 2011, value: 5000, is_favorite: true, is_wishlist: false },
+            { id: '4', player_name: 'LeBron James', sport: 'Basketball', year: 2003, value: 8000, is_favorite: false, is_wishlist: true },
         ];
 
         it('should filter cards by sport', () => {
@@ -85,6 +85,27 @@ describe('Card Utilities', () => {
             const mikeCards = searchByPlayer(testCards, 'mike');
             expect(mikeCards).toHaveLength(1);
             expect(mikeCards[0].player_name).toBe('Mike Trout');
+        });
+
+        it('should filter cards by favorites', () => {
+            const filterByFavorites = (cards: any[]) => {
+                return cards.filter(card => card.is_favorite === true);
+            };
+
+            const favoriteCards = filterByFavorites(testCards);
+            expect(favoriteCards).toHaveLength(2);
+            expect(favoriteCards[0].player_name).toBe('Michael Jordan');
+            expect(favoriteCards[1].player_name).toBe('Mike Trout');
+        });
+
+        it('should filter cards by wishlist', () => {
+            const filterByWishlist = (cards: any[]) => {
+                return cards.filter(card => card.is_wishlist === true);
+            };
+
+            const wishlistCards = filterByWishlist(testCards);
+            expect(wishlistCards).toHaveLength(1);
+            expect(wishlistCards[0].player_name).toBe('LeBron James');
         });
     });
 

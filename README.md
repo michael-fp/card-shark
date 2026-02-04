@@ -8,10 +8,11 @@
 
 - 📸 **AI-Powered Card Recognition** - Upload a photo and CardShark automatically identifies the card
 - 🖼️ **Instagram-Style Gallery** - Beautiful grid layout with modal card view
-- 🔍 **Smart Filtering** - Filter by sport, year, team, grade, and value
+- 🔍 **Smart Filtering** - Filter by sport, year, team, grade, value, and favorites
 - 📊 **Portfolio Analytics** - Track your collection value over time
 - 💰 **Price Alerts** - Get notified when card values change
-- ⭐ **Wishlist** - Track cards you want to add
+- ❤️ **Favorites** - Mark your favorite cards with the heart button
+- ⭐ **Wishlist** - Track cards you want to add (upload via Wishlist tab)
 - 📱 **Mobile-First** - Designed for phone camera uploads
 
 ## Tech Stack
