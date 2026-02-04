@@ -118,8 +118,8 @@ router.get('/', asyncHandler(async (req, res) => {
             totalCost,
             profit: totalValue - totalCost,
             profitPercent: totalCost > 0 ? ((totalValue - totalCost) / totalCost * 100).toFixed(1) : 0,
-            avgGrade: parseFloat(stats.avg_grade).toFixed(1) || 0,
-            avgValue: parseFloat(stats.avg_value).toFixed(2) || 0,
+            avgGrade: stats.avg_grade ? parseFloat(stats.avg_grade).toFixed(1) : '0.0',
+            avgValue: stats.avg_value ? parseFloat(stats.avg_value).toFixed(2) : '0.00',
             wishlistCount: parseInt(wishlistCount.rows[0].count) || 0,
         },
         bySort: sportBreakdown.rows.map(row => ({
@@ -250,8 +250,8 @@ router.get('/overview', asyncHandler(async (req, res) => {
             totalCost,
             profit: totalValue - totalCost,
             profitPercent: totalCost > 0 ? ((totalValue - totalCost) / totalCost * 100).toFixed(1) : 0,
-            avgGrade: parseFloat(stats.avg_grade).toFixed(1) || 0,
-            avgValue: parseFloat(stats.avg_value).toFixed(2) || 0,
+            avgGrade: stats.avg_grade ? parseFloat(stats.avg_grade).toFixed(1) : '0.0',
+            avgValue: stats.avg_value ? parseFloat(stats.avg_value).toFixed(2) : '0.00',
             wishlistCount: parseInt(wishlistCount.rows[0].count) || 0,
         },
         bySort: sportBreakdown.rows.map(row => ({

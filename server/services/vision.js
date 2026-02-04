@@ -166,8 +166,8 @@ const parseCardText = (rawText, logos) => {
     const detectedSet = sets.find(s => text.includes(s.toLowerCase()));
 
     // Try to extract team from logos (logos often contain full team names like "Detroit Red Wings")
-    // This runs after initial team detection to potentially override with more accurate logo-based team
-    if (!detectedTeam && logos && logos.length > 0) {
+    // Logos are more reliable than OCR text, so always check them and let them override
+    if (logos && logos.length > 0) {
         // Map of logo names to team names and sports
         const logoTeamMap = {
             // NHL
