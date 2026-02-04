@@ -162,8 +162,82 @@ const parseCardText = (rawText, logos) => {
         logos.find(l => brands.some(b => l.includes(b)));
 
     // Common card sets
-    const sets = ['Prizm', 'Chrome', 'Optic', 'Select', 'Mosaic', 'National Treasures', 'Contenders', 'Magicians'];
+    const sets = ['Prizm', 'Chrome', 'Optic', 'Select', 'Mosaic', 'National Treasures', 'Contenders', 'Magicians', 'Allure', 'Finest', 'Heritage', 'Archives', 'Stadium Club'];
     const detectedSet = sets.find(s => text.includes(s.toLowerCase()));
+
+    // Try to extract team from logos (logos often contain full team names like "Detroit Red Wings")
+    // This runs after initial team detection to potentially override with more accurate logo-based team
+    if (!detectedTeam && logos && logos.length > 0) {
+        // Map of logo names to team names and sports
+        const logoTeamMap = {
+            // NHL
+            'Detroit Red Wings': { team: 'Red Wings', sport: 'Hockey' },
+            'Boston Bruins': { team: 'Bruins', sport: 'Hockey' },
+            'Chicago Blackhawks': { team: 'Blackhawks', sport: 'Hockey' },
+            'Montreal Canadiens': { team: 'Canadiens', sport: 'Hockey' },
+            'Toronto Maple Leafs': { team: 'Maple Leafs', sport: 'Hockey' },
+            'New York Rangers': { team: 'Rangers', sport: 'Hockey' },
+            'Pittsburgh Penguins': { team: 'Penguins', sport: 'Hockey' },
+            'Philadelphia Flyers': { team: 'Flyers', sport: 'Hockey' },
+            'Edmonton Oilers': { team: 'Oilers', sport: 'Hockey' },
+            'Colorado Avalanche': { team: 'Avalanche', sport: 'Hockey' },
+            'Tampa Bay Lightning': { team: 'Lightning', sport: 'Hockey' },
+            'Vegas Golden Knights': { team: 'Golden Knights', sport: 'Hockey' },
+            // MLB
+            'Boston Red Sox': { team: 'Red Sox', sport: 'Baseball' },
+            'New York Yankees': { team: 'Yankees', sport: 'Baseball' },
+            'Los Angeles Dodgers': { team: 'Dodgers', sport: 'Baseball' },
+            'Chicago Cubs': { team: 'Cubs', sport: 'Baseball' },
+            'San Francisco Giants': { team: 'Giants', sport: 'Baseball' },
+            'St. Louis Cardinals': { team: 'Cardinals', sport: 'Baseball' },
+            'Atlanta Braves': { team: 'Braves', sport: 'Baseball' },
+            'Houston Astros': { team: 'Astros', sport: 'Baseball' },
+            'Philadelphia Phillies': { team: 'Phillies', sport: 'Baseball' },
+            'Texas Rangers': { team: 'Rangers', sport: 'Baseball' },
+            // NBA
+            'Los Angeles Lakers': { team: 'Lakers', sport: 'Basketball' },
+            'Boston Celtics': { team: 'Celtics', sport: 'Basketball' },
+            'Chicago Bulls': { team: 'Bulls', sport: 'Basketball' },
+            'Golden State Warriors': { team: 'Warriors', sport: 'Basketball' },
+            'Miami Heat': { team: 'Heat', sport: 'Basketball' },
+            'San Antonio Spurs': { team: 'Spurs', sport: 'Basketball' },
+            'Milwaukee Bucks': { team: 'Bucks', sport: 'Basketball' },
+            'Phoenix Suns': { team: 'Suns', sport: 'Basketball' },
+            'Dallas Mavericks': { team: 'Mavericks', sport: 'Basketball' },
+            // NFL
+            'Dallas Cowboys': { team: 'Cowboys', sport: 'Football' },
+            'New England Patriots': { team: 'Patriots', sport: 'Football' },
+            'Green Bay Packers': { team: 'Packers', sport: 'Football' },
+            'Pittsburgh Steelers': { team: 'Steelers', sport: 'Football' },
+            'Kansas City Chiefs': { team: 'Chiefs', sport: 'Football' },
+            'San Francisco 49ers': { team: '49ers', sport: 'Football' },
+            'Philadelphia Eagles': { team: 'Eagles', sport: 'Football' },
+        };
+
+        for (const logo of logos) {
+            // Check for exact match first
+            if (logoTeamMap[logo]) {
+                detectedTeam = logoTeamMap[logo].team;
+                if (sport === 'Unknown') {
+                    sport = logoTeamMap[logo].sport;
+                }
+                break;
+            }
+
+            // Try partial match - logo might contain team name
+            for (const [logoName, info] of Object.entries(logoTeamMap)) {
+                if (logo.toLowerCase().includes(logoName.toLowerCase()) ||
+                    logoName.toLowerCase().includes(logo.toLowerCase())) {
+                    detectedTeam = info.team;
+                    if (sport === 'Unknown') {
+                        sport = info.sport;
+                    }
+                    break;
+                }
+            }
+            if (detectedTeam) break;
+        }
+    }
 
     // Extract player name - look for lines that look like names (2+ capital words)
     let playerName = null;
@@ -202,6 +276,19 @@ const parseCardText = (rawText, logos) => {
         .filter(l => l.length > 2 && !l.match(/^\d+$/))
         .slice(0, 5);
 
+    // Combine brand and cardSet for display (e.g., "Donruss Magicians", "Topps Chrome")
+    let combinedCardSet = null;
+    if (detectedBrand && detectedSet) {
+        // Only combine if they're different
+        if (detectedBrand.toLowerCase() !== detectedSet.toLowerCase()) {
+            combinedCardSet = `${detectedBrand} ${detectedSet}`;
+        } else {
+            combinedCardSet = detectedBrand;
+        }
+    } else {
+        combinedCardSet = detectedSet || detectedBrand || null;
+    }
+
     return {
         rawText: rawText.substring(0, 500), // Truncate for storage
         playerName,
@@ -211,7 +298,7 @@ const parseCardText = (rawText, logos) => {
         cardNumber,
         grade,
         brand: detectedBrand,
-        cardSet: detectedSet || detectedBrand, // Fallback to brand if no set found
+        cardSet: combinedCardSet,
         searchQuery: meaningfulLines.join(' ').substring(0, 200),
         logos,
     };
