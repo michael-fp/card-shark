@@ -12,6 +12,7 @@ import { canMakeApiCall, incrementApiUsage } from '../middleware/usage.js';
 import { extractCardText } from '../services/vision.js';
 import { searchCards } from '../services/ebay.js';
 import { matchCard } from '../services/matcher.js';
+import { compressImageAsync } from '../services/tinify.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -125,6 +126,12 @@ router.post('/image', upload.single('image'), asyncHandler(async (req, res) => {
     if (storageWarning) {
         console.warn(`⚠️ Storage warning: ${(newBytes / (1024 * 1024)).toFixed(2)}MB used`);
     }
+
+    // Trigger async compression (non-blocking - don't await)
+    // This will compress the image in the background and update storage when done
+    compressImageAsync(filePath, processedImage.length).catch(err => {
+        console.error('Background compression error:', err.message);
+    });
 
     // Run card matching if requested
     let matchResult = null;
