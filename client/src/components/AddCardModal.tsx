@@ -57,10 +57,13 @@ export default function AddCardModal({ isOpen, onClose }: AddCardModalProps) {
                 setMatchResult(data.match);
                 setFormData({
                     imagePath: data.imagePath,
+                    playerName: data.match.extractedData.playerName || undefined,
                     sport: data.match.extractedData.sport !== 'Unknown' ? data.match.extractedData.sport : undefined,
+                    team: data.match.extractedData.team || undefined,
                     year: data.match.extractedData.year || undefined,
                     cardNumber: data.match.extractedData.cardNumber || undefined,
                     cardSet: data.match.extractedData.cardSet || data.match.extractedData.brand || undefined,
+                    grade: data.match.extractedData.grade || undefined,
                 });
             } else {
                 setFormData({ imagePath: data.imagePath });

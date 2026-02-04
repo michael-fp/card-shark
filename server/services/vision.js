@@ -79,8 +79,16 @@ const parseCardText = (rawText, logos) => {
     const lines = rawText.split('\n').map(l => l.trim()).filter(Boolean);
     const text = rawText.toLowerCase();
 
-    // Detect sport
+    // Known team names for sport detection
+    const nbaTeams = ['spurs', 'lakers', 'celtics', 'warriors', 'heat', 'bulls', 'nets', 'knicks', 'suns', 'mavericks', 'nuggets', 'clippers', 'bucks', 'sixers', '76ers', 'raptors', 'thunder', 'jazz', 'blazers', 'kings', 'pelicans', 'grizzlies', 'hawks', 'hornets', 'magic', 'pacers', 'pistons', 'cavaliers', 'timberwolves', 'rockets', 'wizards'];
+    const nflTeams = ['chiefs', 'eagles', 'cowboys', 'bills', 'dolphins', 'patriots', 'jets', 'ravens', 'bengals', 'browns', 'steelers', 'texans', 'colts', 'jaguars', 'titans', 'broncos', 'chargers', 'raiders', 'seahawks', '49ers', 'cardinals', 'rams', 'bears', 'lions', 'packers', 'vikings', 'falcons', 'panthers', 'saints', 'buccaneers', 'commanders', 'giants'];
+    const mlbTeams = ['yankees', 'red sox', 'dodgers', 'cubs', 'giants', 'cardinals', 'braves', 'mets', 'phillies', 'astros', 'rangers', 'padres', 'mariners', 'angels', 'athletics', 'twins', 'brewers', 'reds', 'pirates', 'tigers', 'indians', 'guardians', 'royals', 'white sox', 'orioles', 'blue jays', 'rays', 'marlins', 'nationals', 'rockies', 'diamondbacks'];
+    const nhlTeams = ['bruins', 'canadiens', 'maple leafs', 'blackhawks', 'red wings', 'rangers', 'flyers', 'penguins', 'capitals', 'lightning', 'panthers', 'hurricanes', 'blue jackets', 'devils', 'islanders', 'senators', 'sabres', 'jets', 'predators', 'blues', 'stars', 'avalanche', 'wild', 'oilers', 'flames', 'canucks', 'kraken', 'sharks', 'kings', 'ducks', 'coyotes', 'golden knights'];
+
+    // Detect sport (check logos first, then keywords, then team names)
     let sport = 'Unknown';
+    let detectedTeam = null;
+
     if (text.includes('nba') || text.includes('basketball') || logos.includes('NBA')) {
         sport = 'Basketball';
     } else if (text.includes('nfl') || text.includes('football') || logos.includes('NFL')) {
@@ -91,6 +99,44 @@ const parseCardText = (rawText, logos) => {
         sport = 'Hockey';
     } else if (text.includes('soccer') || text.includes('fifa') || logos.includes('FIFA')) {
         sport = 'Soccer';
+    } else {
+        // Try to detect sport from team names
+        const textLower = text.toLowerCase();
+
+        for (const team of nbaTeams) {
+            if (textLower.includes(team)) {
+                sport = 'Basketball';
+                detectedTeam = team.charAt(0).toUpperCase() + team.slice(1);
+                break;
+            }
+        }
+        if (sport === 'Unknown') {
+            for (const team of nflTeams) {
+                if (textLower.includes(team)) {
+                    sport = 'Football';
+                    detectedTeam = team.charAt(0).toUpperCase() + team.slice(1);
+                    break;
+                }
+            }
+        }
+        if (sport === 'Unknown') {
+            for (const team of mlbTeams) {
+                if (textLower.includes(team)) {
+                    sport = 'Baseball';
+                    detectedTeam = team.charAt(0).toUpperCase() + team.slice(1);
+                    break;
+                }
+            }
+        }
+        if (sport === 'Unknown') {
+            for (const team of nhlTeams) {
+                if (textLower.includes(team)) {
+                    sport = 'Hockey';
+                    detectedTeam = team.charAt(0).toUpperCase() + team.slice(1);
+                    break;
+                }
+            }
+        }
     }
 
     // Extract year (typically 4 digits between 1900-2030)
@@ -101,14 +147,55 @@ const parseCardText = (rawText, logos) => {
     const cardNumberMatch = rawText.match(/(?:#|No\.?|Card)\s*(\d+)/i);
     const cardNumber = cardNumberMatch ? cardNumberMatch[1] : null;
 
+    // Extract grade (PSA, BGS, SGC formats)
+    let grade = null;
+    const gradeMatch = rawText.match(/(?:PSA|BGS|SGC|GEM\s*MT)\s*(\d+(?:\.\d+)?)/i);
+    if (gradeMatch) {
+        grade = parseFloat(gradeMatch[1]);
+    } else if (text.includes('gem mt') || text.includes('gem mint')) {
+        grade = 10;
+    }
+
     // Common card brands
     const brands = ['Topps', 'Panini', 'Upper Deck', 'Bowman', 'Fleer', 'Donruss', 'Score'];
     const detectedBrand = brands.find(b => text.includes(b.toLowerCase())) ||
         logos.find(l => brands.some(b => l.includes(b)));
 
     // Common card sets
-    const sets = ['Prizm', 'Chrome', 'Optic', 'Select', 'Mosaic', 'National Treasures', 'Contenders'];
+    const sets = ['Prizm', 'Chrome', 'Optic', 'Select', 'Mosaic', 'National Treasures', 'Contenders', 'Magicians'];
     const detectedSet = sets.find(s => text.includes(s.toLowerCase()));
+
+    // Extract player name - look for lines that look like names (2+ capital words)
+    let playerName = null;
+
+    // Filter out common non-name lines
+    const nonNamePatterns = [
+        /^\d+$/, // Just numbers
+        /^#\d+/, // Card numbers
+        /^psa|bgs|sgc|gem|mt|mint/i, // Grades
+        /^rc$|^rookie$/i, // RC labels
+        /^\d{4}$/, // Years
+        /^topps|panini|upper|bowman|fleer|donruss|score|prizm|chrome|optic|select|mosaic/i, // Brands
+    ];
+
+    for (const line of lines) {
+        // Skip short lines or lines matching non-name patterns
+        if (line.length < 3) continue;
+        if (nonNamePatterns.some(p => p.test(line))) continue;
+
+        // Look for lines that look like player names (mostly uppercase, 2+ parts)
+        const words = line.split(/\s+/);
+        const isLikelyName = words.length >= 2 &&
+            words.every(w => /^[A-Z][A-Za-z'-]*$/.test(w) || /^[A-Z]+$/.test(w)) &&
+            !brands.some(b => line.toLowerCase().includes(b.toLowerCase())) &&
+            line.length > 5 && line.length < 50;
+
+        if (isLikelyName) {
+            // Title case the name
+            playerName = words.map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
+            break;
+        }
+    }
 
     // Build search query (use first few meaningful lines)
     const meaningfulLines = lines
@@ -117,11 +204,14 @@ const parseCardText = (rawText, logos) => {
 
     return {
         rawText: rawText.substring(0, 500), // Truncate for storage
+        playerName,
         sport,
+        team: detectedTeam,
         year,
         cardNumber,
+        grade,
         brand: detectedBrand,
-        cardSet: detectedSet,
+        cardSet: detectedSet || detectedBrand, // Fallback to brand if no set found
         searchQuery: meaningfulLines.join(' ').substring(0, 200),
         logos,
     };
