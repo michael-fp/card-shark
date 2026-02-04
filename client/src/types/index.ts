@@ -140,6 +140,7 @@ export interface CardMatch {
         team: string | null;
         cardNumber: string | null;
         cardSet: string | null;
+        grade: number | null;
         value: number;
         ebayItemId: string;
         ebayTitle: string;

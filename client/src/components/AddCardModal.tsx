@@ -117,7 +117,7 @@ export default function AddCardModal({ isOpen, onClose }: AddCardModalProps) {
                 const matched = data.match.matchedCard;
                 setFormData({
                     imagePath: data.imagePath,
-                    playerName: matched.playerName || extracted?.playerName,
+                    playerName: matched.playerName || extracted?.playerName || undefined,
                     sport: matched.sport,
                     year: matched.year || undefined,
                     team: matched.team || extracted?.team || undefined,
