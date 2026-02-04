@@ -56,8 +56,8 @@ export default function Stats() {
         );
     }
 
-    const { overview = {} as any, bySort = [], byGrade = [], byYear = [], topCards = [] } = displayStats || {};
-    const bySport = bySort; // Alias for readability
+    const { overview = {} as any, bySort = [] as Array<{ sport: string; count: number; totalValue: number }>, byGrade = [] as Array<{ grade: number; count: number }>, byYear = [] as Array<{ year: number; count: number; totalValue: number }>, topCards = [] } = displayStats || {};
+    const bySport = bySort;
 
     // Safe defaults for overview
     const safeOverview = {

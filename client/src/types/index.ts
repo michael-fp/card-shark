@@ -62,7 +62,12 @@ export interface CollectionStats {
         avgValue: number;
         wishlistCount: number;
     };
-    bySport: Array<{
+    bySport?: Array<{
+        sport: string;
+        count: number;
+        totalValue: number;
+    }>;
+    bySort?: Array<{
         sport: string;
         count: number;
         totalValue: number;
