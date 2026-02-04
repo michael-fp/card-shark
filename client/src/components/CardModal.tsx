@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Heart, Edit, Trash2, Bell, ExternalLink } from 'lucide-react';
+import { X, Heart, Edit, Trash2, ExternalLink } from 'lucide-react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '../services/api';
 import type { Card } from '../types';
@@ -206,9 +206,15 @@ export default function CardModal({ card, onClose, onUpdate }: CardModalProps) {
                                     <Trash2 className="w-5 h-5" />
                                 </button>
 
-                                <button className="flex-1 btn-ig-primary flex items-center justify-center gap-2">
-                                    <Bell className="w-4 h-4" />
-                                    Set Price Alert
+                                <button
+                                    onClick={() => {
+                                        const query = [card.year, card.player_name, card.card_set, card.grade ? `PSA ${card.grade}` : ''].filter(Boolean).join(' ');
+                                        window.open(`https://www.ebay.com/sch/i.html?_nkw=${encodeURIComponent(query)}`, '_blank');
+                                    }}
+                                    className="flex-1 btn-ig-primary flex items-center justify-center gap-2"
+                                >
+                                    <ExternalLink className="w-4 h-4" />
+                                    View Listings
                                 </button>
                             </div>
                         </div>

@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom';
-import { Grid3X3, PlusSquare, BarChart3, Heart, Bell } from 'lucide-react';
+import { Grid3X3, PlusSquare, BarChart3, Heart } from 'lucide-react';
 import { useState } from 'react';
 import AddCardModal from './AddCardModal';
 
@@ -9,7 +9,6 @@ export default function BottomNav() {
     const navItems = [
         { to: '/', icon: Grid3X3, label: 'Gallery' },
         { to: '/stats', icon: BarChart3, label: 'Stats' },
-        { to: '/alerts', icon: Bell, label: 'Alerts' },
         { to: '/wishlist', icon: Heart, label: 'Wishlist' },
     ];
 
