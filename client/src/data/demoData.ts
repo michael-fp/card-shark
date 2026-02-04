@@ -1,352 +1,445 @@
-/**
- * Demo data for local testing
- * Provides sample sports card data to preview the app experience
- */
+import type { Card, CollectionStats, User } from '../types';
 
-export const DEMO_CARDS = [
+// Demo card data with real card images
+export const DEMO_CARDS: Card[] = [
+    // Football Cards
     {
         id: 'demo-1',
-        image_path: '/api/demo/images/mahomes.jpg',
-        description: 'Rookie card in excellent condition, PSA 10 gem mint',
-        sport: 'Football',
-        year: 2017,
         player_name: 'Patrick Mahomes',
-        team: 'Kansas City Chiefs',
-        card_number: '327',
+        year: 2017,
         card_set: 'Panini Prizm',
+        card_number: '269',
+        team: 'Kansas City Chiefs',
+        sport: 'Football',
         grade: 10,
-        value: 8500.00,
-        purchase_price: 450.00,
+        purchase_price: 8500,
+        value: 45000,
+        image_path: '/demo-cards/mahomes.png',
+        description: 'MVP Rookie Card - Gem Mint 10',
         is_wishlist: false,
         ebay_item_id: null,
-        created_at: '2024-06-15T10:30:00Z',
-        updated_at: '2024-12-01T14:20:00Z',
+        created_at: '2024-01-15T12:00:00Z',
+        updated_at: '2024-01-15T12:00:00Z'
     },
     {
         id: 'demo-2',
-        image_path: '/api/demo/images/jordan.jpg',
-        description: 'Iconic rookie card, well-centered',
-        sport: 'Basketball',
-        year: 1986,
-        player_name: 'Michael Jordan',
-        team: 'Chicago Bulls',
-        card_number: '57',
-        card_set: 'Fleer',
-        grade: 8,
-        value: 45000.00,
-        purchase_price: 12000.00,
+        player_name: 'Tom Brady',
+        year: 2000,
+        card_set: 'Playoff Contenders',
+        card_number: '144',
+        team: 'New England Patriots',
+        sport: 'Football',
+        grade: 9,
+        purchase_price: 15000,
+        value: 85000,
+        image_path: '/demo-cards/brady.png',
+        description: 'Championship Ticket Auto RC - PSA 9',
         is_wishlist: false,
         ebay_item_id: null,
-        created_at: '2023-03-20T08:00:00Z',
-        updated_at: '2024-11-15T09:45:00Z',
+        created_at: '2024-01-16T12:00:00Z',
+        updated_at: '2024-01-16T12:00:00Z'
     },
     {
         id: 'demo-3',
-        image_path: '/api/demo/images/trout.jpg',
-        description: 'Chrome refractor, serial numbered /250',
-        sport: 'Baseball',
-        year: 2011,
-        player_name: 'Mike Trout',
-        team: 'Los Angeles Angels',
-        card_number: '175',
-        card_set: 'Topps Chrome',
+        player_name: 'Joe Burrow',
+        year: 2020,
+        card_set: 'Panini Mosaic',
+        card_number: '261',
+        team: 'Cincinnati Bengals',
+        sport: 'Football',
         grade: 9.5,
-        value: 6800.00,
-        purchase_price: 1200.00,
+        purchase_price: 450,
+        value: 1200,
+        image_path: '/demo-cards/burrow.png',
+        description: 'Heisman Winner Mosaic Prizm - PSA 9.5',
         is_wishlist: false,
         ebay_item_id: null,
-        created_at: '2024-01-10T16:45:00Z',
-        updated_at: '2024-10-20T11:30:00Z',
+        created_at: '2024-01-17T12:00:00Z',
+        updated_at: '2024-01-17T12:00:00Z'
     },
     {
         id: 'demo-4',
-        image_path: '/api/demo/images/ohtani.jpg',
-        description: 'First Bowman Chrome Auto, rising star',
-        sport: 'Baseball',
-        year: 2018,
-        player_name: 'Shohei Ohtani',
-        team: 'Los Angeles Angels',
-        card_number: 'BCP1',
-        card_set: 'Bowman Chrome',
-        grade: 9,
-        value: 2500.00,
-        purchase_price: 800.00,
+        player_name: 'Travis Kelce',
+        year: 2013,
+        card_set: 'Topps Chrome',
+        card_number: '238',
+        team: 'Kansas City Chiefs',
+        sport: 'Football',
+        grade: 10,
+        purchase_price: 200,
+        value: 850,
+        image_path: '/demo-cards/kelce.png',
+        description: 'Chrome Refractor RC - Gem Mint 10',
         is_wishlist: false,
         ebay_item_id: null,
-        created_at: '2024-04-05T12:00:00Z',
-        updated_at: '2024-12-10T15:00:00Z',
+        created_at: '2024-02-01T12:00:00Z',
+        updated_at: '2024-02-01T12:00:00Z'
     },
+
+    // Basketball Cards
     {
         id: 'demo-5',
-        image_path: '/api/demo/images/curry.jpg',
-        description: 'National Treasures patch auto, /99',
+        player_name: 'Michael Jordan',
+        year: 1986,
+        card_set: 'Fleer',
+        card_number: '57',
+        team: 'Chicago Bulls',
         sport: 'Basketball',
-        year: 2009,
-        player_name: 'Stephen Curry',
-        team: 'Golden State Warriors',
-        card_number: '206',
-        card_set: 'National Treasures',
         grade: 9,
-        value: 15000.00,
-        purchase_price: 3500.00,
+        purchase_price: 12000,
+        value: 42000,
+        image_path: '/demo-cards/jordan.png',
+        description: 'The GOAT Rookie Card - PSA 9',
         is_wishlist: false,
         ebay_item_id: null,
-        created_at: '2024-02-28T09:15:00Z',
-        updated_at: '2024-11-30T08:00:00Z',
+        created_at: '2024-01-18T12:00:00Z',
+        updated_at: '2024-01-18T12:00:00Z'
     },
     {
         id: 'demo-6',
-        image_path: '/api/demo/images/mcdavid.jpg',
-        description: 'Young Guns RC, future HOF',
-        sport: 'Hockey',
-        year: 2015,
-        player_name: 'Connor McDavid',
-        team: 'Edmonton Oilers',
-        card_number: '201',
-        card_set: 'Upper Deck',
-        grade: 10,
-        value: 3200.00,
-        purchase_price: 500.00,
+        player_name: 'LeBron James',
+        year: 2003,
+        card_set: 'Topps Chrome',
+        card_number: '111',
+        team: 'Cleveland Cavaliers',
+        sport: 'Basketball',
+        grade: 9.5,
+        purchase_price: 8500,
+        value: 35000,
+        image_path: '/demo-cards/lebron.png',
+        description: 'Refractor Rookie Card - PSA 9.5',
         is_wishlist: false,
         ebay_item_id: null,
-        created_at: '2024-05-12T14:30:00Z',
-        updated_at: '2024-12-05T10:00:00Z',
+        created_at: '2024-01-19T12:00:00Z',
+        updated_at: '2024-01-19T12:00:00Z'
     },
     {
         id: 'demo-7',
-        image_path: '/api/demo/images/burrow.jpg',
-        description: 'Mosaic Prizm RC, sharp corners',
-        sport: 'Football',
-        year: 2020,
-        player_name: 'Joe Burrow',
-        team: 'Cincinnati Bengals',
-        card_number: '201',
-        card_set: 'Panini Mosaic',
-        grade: 9.5,
-        value: 650.00,
-        purchase_price: 125.00,
+        player_name: 'Stephen Curry',
+        year: 2009,
+        card_set: 'Panini National Treasures',
+        card_number: '106',
+        team: 'Golden State Warriors',
+        sport: 'Basketball',
+        grade: 9,
+        purchase_price: 5000,
+        value: 18500,
+        image_path: '/demo-cards/curry.png',
+        description: 'Patch Auto RC /99 - PSA 9',
         is_wishlist: false,
         ebay_item_id: null,
-        created_at: '2024-07-20T11:00:00Z',
-        updated_at: '2024-11-28T16:30:00Z',
+        created_at: '2024-01-20T12:00:00Z',
+        updated_at: '2024-01-20T12:00:00Z'
     },
     {
         id: 'demo-8',
-        image_path: '/api/demo/images/wembanyama.jpg',
-        description: 'Rated Rookie, first NBA card',
-        sport: 'Basketball',
-        year: 2023,
         player_name: 'Victor Wembanyama',
+        year: 2023,
+        card_set: 'Donruss Rated Rookie',
+        card_number: '1',
         team: 'San Antonio Spurs',
-        card_number: '201',
-        card_set: 'Donruss',
+        sport: 'Basketball',
         grade: null,
-        value: 180.00,
-        purchase_price: 50.00,
+        purchase_price: 150,
+        value: 380,
+        image_path: '/demo-cards/wembanyama.png',
+        description: 'Raw - To Be Graded',
         is_wishlist: false,
         ebay_item_id: null,
-        created_at: '2024-10-01T13:00:00Z',
-        updated_at: '2024-12-12T09:00:00Z',
+        created_at: '2024-01-21T12:00:00Z',
+        updated_at: '2024-01-21T12:00:00Z'
     },
     {
         id: 'demo-9',
-        image_path: '/api/demo/images/gretzky.jpg',
-        description: 'The Great One, iconic vintage card',
-        sport: 'Hockey',
-        year: 1979,
-        player_name: 'Wayne Gretzky',
-        team: 'Edmonton Oilers',
-        card_number: '18',
-        card_set: 'O-Pee-Chee',
-        grade: 7,
-        value: 25000.00,
-        purchase_price: 8000.00,
+        player_name: 'Jayson Tatum',
+        year: 2017,
+        card_set: 'Panini Prizm',
+        card_number: '25',
+        team: 'Boston Celtics',
+        sport: 'Basketball',
+        grade: 9.5,
+        purchase_price: 600,
+        value: 2200,
+        image_path: '/demo-cards/tatum.png',
+        description: 'Silver Prizm RC - PSA 9.5',
         is_wishlist: false,
         ebay_item_id: null,
-        created_at: '2023-11-15T10:00:00Z',
-        updated_at: '2024-10-01T14:00:00Z',
+        created_at: '2024-02-02T12:00:00Z',
+        updated_at: '2024-02-02T12:00:00Z'
     },
+
+    // Baseball Cards
     {
         id: 'demo-10',
-        image_path: '/api/demo/images/jeter.jpg',
-        description: 'SP Foil rookie, Captain Clutch',
+        player_name: 'Mike Trout',
+        year: 2011,
+        card_set: 'Topps Update',
+        card_number: 'US175',
+        team: 'Los Angeles Angels',
         sport: 'Baseball',
-        year: 1993,
-        player_name: 'Derek Jeter',
-        team: 'New York Yankees',
-        card_number: '279',
-        card_set: 'SP',
-        grade: 8.5,
-        value: 4200.00,
-        purchase_price: 1500.00,
+        grade: 10,
+        purchase_price: 3500,
+        value: 12000,
+        image_path: '/demo-cards/trout.png',
+        description: 'Gem Mint 10 - Low Pop',
         is_wishlist: false,
         ebay_item_id: null,
-        created_at: '2024-03-10T15:30:00Z',
-        updated_at: '2024-11-20T12:00:00Z',
+        created_at: '2024-01-22T12:00:00Z',
+        updated_at: '2024-01-22T12:00:00Z'
     },
     {
         id: 'demo-11',
-        image_path: '/api/demo/images/brady.jpg',
-        description: 'Contenders RC Auto, GOAT signature',
-        sport: 'Football',
-        year: 2000,
-        player_name: 'Tom Brady',
-        team: 'New England Patriots',
-        card_number: '144',
-        card_set: 'Contenders',
+        player_name: 'Shohei Ohtani',
+        year: 2018,
+        card_set: 'Bowman Chrome',
+        card_number: 'RC1',
+        team: 'Los Angeles Angels',
+        sport: 'Baseball',
         grade: 9,
-        value: 85000.00,
-        purchase_price: 15000.00,
+        purchase_price: 800,
+        value: 2800,
+        image_path: '/demo-cards/ohtani.png',
+        description: 'Japanese Rising Star RC - PSA 9',
         is_wishlist: false,
         ebay_item_id: null,
-        created_at: '2023-06-01T09:00:00Z',
-        updated_at: '2024-09-15T11:00:00Z',
+        created_at: '2024-01-23T12:00:00Z',
+        updated_at: '2024-01-23T12:00:00Z'
     },
     {
         id: 'demo-12',
-        image_path: '/api/demo/images/lebron.jpg',
-        description: 'Chrome RC, King James rookie',
-        sport: 'Basketball',
-        year: 2003,
-        player_name: 'LeBron James',
-        team: 'Cleveland Cavaliers',
-        card_number: '111',
-        card_set: 'Topps Chrome',
-        grade: 9.5,
-        value: 55000.00,
-        purchase_price: 8500.00,
+        player_name: 'Derek Jeter',
+        year: 1993,
+        card_set: 'SP Foil',
+        card_number: '279',
+        team: 'New York Yankees',
+        sport: 'Baseball',
+        grade: 8.5,
+        purchase_price: 1200,
+        value: 4500,
+        image_path: '/demo-cards/jeter.png',
+        description: 'Captain Clutch Vintage RC - PSA 8.5',
         is_wishlist: false,
         ebay_item_id: null,
-        created_at: '2023-01-20T08:00:00Z',
-        updated_at: '2024-08-10T16:00:00Z',
+        created_at: '2024-01-24T12:00:00Z',
+        updated_at: '2024-01-24T12:00:00Z'
     },
-    // Wishlist cards
     {
         id: 'demo-13',
-        image_path: '/api/demo/images/rookie-card.jpg',
-        description: 'Looking for PSA 9 or higher',
-        sport: 'Football',
-        year: 2021,
-        player_name: 'Ja\'Marr Chase',
-        team: 'Cincinnati Bengals',
-        card_number: '150',
-        card_set: 'Prizm Silver',
-        grade: null,
-        value: 450.00,
-        purchase_price: null,
-        is_wishlist: true,
+        player_name: 'Ronald Acuña Jr.',
+        year: 2018,
+        card_set: 'Topps Update',
+        card_number: 'US250',
+        team: 'Atlanta Braves',
+        sport: 'Baseball',
+        grade: 9,
+        purchase_price: 350,
+        value: 1100,
+        image_path: '/demo-cards/acuna.png',
+        description: 'Bat Down Photo Variation - PSA 9',
+        is_wishlist: false,
         ebay_item_id: null,
-        created_at: '2024-11-01T10:00:00Z',
-        updated_at: '2024-11-01T10:00:00Z',
+        created_at: '2024-02-03T12:00:00Z',
+        updated_at: '2024-02-03T12:00:00Z'
     },
+
+    // Hockey Cards
     {
         id: 'demo-14',
-        image_path: '/api/demo/images/rookie-card.jpg',
-        description: 'Want the auto version',
-        sport: 'Baseball',
-        year: 2024,
-        player_name: 'Elly De La Cruz',
-        team: 'Cincinnati Reds',
-        card_number: '25',
-        card_set: 'Bowman 1st',
+        player_name: 'Wayne Gretzky',
+        year: 1979,
+        card_set: 'O-Pee-Chee',
+        card_number: '18',
+        team: 'Edmonton Oilers',
+        sport: 'Hockey',
+        grade: 7,
+        purchase_price: 8000,
+        value: 25000,
+        image_path: '/demo-cards/gretzky.png',
+        description: 'The Great One - Vintage RC - PSA 7',
+        is_wishlist: false,
+        ebay_item_id: null,
+        created_at: '2024-01-25T12:00:00Z',
+        updated_at: '2024-01-25T12:00:00Z'
+    },
+    {
+        id: 'demo-15',
+        player_name: 'Connor McDavid',
+        year: 2015,
+        card_set: 'Upper Deck Young Guns',
+        card_number: '201',
+        team: 'Edmonton Oilers',
+        sport: 'Hockey',
+        grade: 10,
+        purchase_price: 2000,
+        value: 8500,
+        image_path: '/demo-cards/mcdavid.png',
+        description: 'Young Guns RC - Gem Mint 10',
+        is_wishlist: false,
+        ebay_item_id: null,
+        created_at: '2024-01-26T12:00:00Z',
+        updated_at: '2024-01-26T12:00:00Z'
+    },
+    {
+        id: 'demo-16',
+        player_name: 'Sidney Crosby',
+        year: 2005,
+        card_set: 'Upper Deck Young Guns',
+        card_number: '720',
+        team: 'Pittsburgh Penguins',
+        sport: 'Hockey',
+        grade: 9,
+        purchase_price: 1500,
+        value: 5200,
+        image_path: '/demo-cards/crosby.png',
+        description: 'Sid the Kid Rookie - PSA 9',
+        is_wishlist: false,
+        ebay_item_id: null,
+        created_at: '2024-02-04T12:00:00Z',
+        updated_at: '2024-02-04T12:00:00Z'
+    },
+
+    // Wishlist Items (cards to acquire)
+    {
+        id: 'demo-wishlist-1',
+        player_name: 'Luka Dončić',
+        year: 2018,
+        card_set: 'Panini Prizm',
+        card_number: '280',
+        team: 'Dallas Mavericks',
+        sport: 'Basketball',
         grade: null,
-        value: 200.00,
         purchase_price: null,
+        value: 8500,
+        image_path: '',
+        description: 'Target: PSA 10 Silver Prizm RC',
         is_wishlist: true,
         ebay_item_id: null,
-        created_at: '2024-12-01T14:00:00Z',
-        updated_at: '2024-12-01T14:00:00Z',
+        created_at: '2024-01-27T12:00:00Z',
+        updated_at: '2024-01-27T12:00:00Z'
     },
+    {
+        id: 'demo-wishlist-2',
+        player_name: 'Ken Griffey Jr.',
+        year: 1989,
+        card_set: 'Upper Deck',
+        card_number: '1',
+        team: 'Seattle Mariners',
+        sport: 'Baseball',
+        grade: null,
+        purchase_price: null,
+        value: 2500,
+        image_path: '',
+        description: 'The Kid - Looking for PSA 9+',
+        is_wishlist: true,
+        ebay_item_id: null,
+        created_at: '2024-01-28T12:00:00Z',
+        updated_at: '2024-01-28T12:00:00Z'
+    }
 ];
 
-// Calculate demo stats
-export const DEMO_STATS = {
-    overview: {
-        totalCards: DEMO_CARDS.filter(c => !c.is_wishlist).length,
-        totalValue: DEMO_CARDS.filter(c => !c.is_wishlist).reduce((sum, c) => sum + (c.value || 0), 0),
-        totalCost: DEMO_CARDS.filter(c => !c.is_wishlist).reduce((sum, c) => sum + (c.purchase_price || 0), 0),
-        get profit() { return this.totalValue - this.totalCost; },
-        get profitPercent() { return this.totalCost > 0 ? ((this.profit / this.totalCost) * 100) : 0; },
-        avgGrade: (() => {
-            const graded = DEMO_CARDS.filter(c => c.grade && !c.is_wishlist);
-            return graded.length > 0
-                ? graded.reduce((sum, c) => sum + c.grade!, 0) / graded.length
-                : 0;
-        })(),
-        avgValue: (() => {
-            const valued = DEMO_CARDS.filter(c => c.value && !c.is_wishlist);
-            return valued.length > 0
-                ? valued.reduce((sum, c) => sum + c.value!, 0) / valued.length
-                : 0;
-        })(),
-        wishlistCount: DEMO_CARDS.filter(c => c.is_wishlist).length,
-    },
-    bySport: (() => {
-        const sports = new Map<string, { count: number; totalValue: number }>();
-        DEMO_CARDS.filter(c => !c.is_wishlist).forEach(card => {
-            const existing = sports.get(card.sport) || { count: 0, totalValue: 0 };
-            sports.set(card.sport, {
-                count: existing.count + 1,
-                totalValue: existing.totalValue + (card.value || 0),
-            });
-        });
-        return Array.from(sports.entries()).map(([sport, data]) => ({
-            sport,
-            ...data,
-        })).sort((a, b) => b.totalValue - a.totalValue);
-    })(),
-    byGrade: (() => {
-        const grades = new Map<number, number>();
-        DEMO_CARDS.filter(c => c.grade && !c.is_wishlist).forEach(card => {
-            const grade = Math.floor(card.grade!);
-            grades.set(grade, (grades.get(grade) || 0) + 1);
-        });
-        return Array.from(grades.entries()).map(([grade, count]) => ({
-            grade,
-            count,
-        })).sort((a, b) => a.grade - b.grade);
-    })(),
-    byYear: (() => {
-        const years = new Map<number, { count: number; totalValue: number }>();
-        DEMO_CARDS.filter(c => c.year && !c.is_wishlist).forEach(card => {
-            const existing = years.get(card.year!) || { count: 0, totalValue: 0 };
-            years.set(card.year!, {
-                count: existing.count + 1,
-                totalValue: existing.totalValue + (card.value || 0),
-            });
-        });
-        return Array.from(years.entries()).map(([year, data]) => ({
-            year,
-            ...data,
-        })).sort((a, b) => b.year - a.year);
-    })(),
-    topCards: DEMO_CARDS.filter(c => !c.is_wishlist)
-        .sort((a, b) => (b.value || 0) - (a.value || 0))
-        .slice(0, 5),
-    recentCards: DEMO_CARDS.filter(c => !c.is_wishlist)
-        .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
-        .slice(0, 5),
-};
-
+// Demo usage data
 export const DEMO_USAGE = {
-    api: {
-        used: 47,
-        limit: 900,
-        approachingLimit: false,
-        remaining: 853,
-    },
-    storage: {
-        used: 125 * 1024 * 1024, // 125MB
-        limit: 1024 * 1024 * 1024, // 1GB
-        warning: false,
-        usedFormatted: '125 MB',
-        limitFormatted: '1 GB',
-    },
+    api_calls_today: 15,
+    api_calls_limit: 100,
+    uploads_today: 3,
+    uploads_limit: 20,
+    last_reset: new Date().toISOString()
 };
 
-export const DEMO_USER = {
+// Demo user data
+export const DEMO_USER: User = {
     id: 'demo-user',
-    email: 'demo@cardshark.app',
-    name: 'Demo User',
-    avatarUrl: null,
+    email: 'demo@cardshark.com',
+    name: 'Demo Collector',
+    avatarUrl: null
 };
+
+// Calculate demo stats dynamically from demo cards (excluding wishlist)
+export function calculateDemoStats(cards: Card[]): CollectionStats {
+    const ownedCards = cards.filter(c => !c.is_wishlist);
+
+    const totalValue = ownedCards.reduce((sum, c) => sum + (c.value || 0), 0);
+    const totalCost = ownedCards.reduce((sum, c) => sum + (c.purchase_price || 0), 0);
+    const profit = totalValue - totalCost;
+
+    const gradedCards = ownedCards.filter(c => c.grade !== null);
+    const avgGrade = gradedCards.length > 0
+        ? gradedCards.reduce((sum, c) => sum + (c.grade || 0), 0) / gradedCards.length
+        : 0;
+    const avgValue = ownedCards.length > 0 ? totalValue / ownedCards.length : 0;
+
+    // Group by sport
+    const sportMap = new Map<string, { count: number; totalValue: number }>();
+    ownedCards.forEach(card => {
+        if (card.sport) {
+            const existing = sportMap.get(card.sport) || { count: 0, totalValue: 0 };
+            sportMap.set(card.sport, {
+                count: existing.count + 1,
+                totalValue: existing.totalValue + (card.value || 0)
+            });
+        }
+    });
+    const bySport = Array.from(sportMap.entries()).map(([sport, data]) => ({
+        sport,
+        count: data.count,
+        totalValue: data.totalValue
+    }));
+
+    // Group by grade
+    const gradeMap = new Map<number, number>();
+    gradedCards.forEach(card => {
+        if (card.grade !== null) {
+            const gradeKey = Math.floor(card.grade);
+            gradeMap.set(gradeKey, (gradeMap.get(gradeKey) || 0) + 1);
+        }
+    });
+    const byGrade = Array.from(gradeMap.entries())
+        .map(([grade, count]) => ({ grade, count }))
+        .sort((a, b) => b.grade - a.grade);
+
+    // Group by year
+    const yearMap = new Map<number, { count: number; totalValue: number }>();
+    ownedCards.forEach(card => {
+        if (card.year) {
+            const existing = yearMap.get(card.year) || { count: 0, totalValue: 0 };
+            yearMap.set(card.year, {
+                count: existing.count + 1,
+                totalValue: existing.totalValue + (card.value || 0)
+            });
+        }
+    });
+    const byYear = Array.from(yearMap.entries())
+        .map(([year, data]) => ({ year, count: data.count, totalValue: data.totalValue }))
+        .sort((a, b) => b.year - a.year);
+
+    // Top cards by value
+    const topCards = [...ownedCards]
+        .sort((a, b) => (b.value || 0) - (a.value || 0))
+        .slice(0, 5);
+
+    // Recent cards
+    const recentCards = [...ownedCards]
+        .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+        .slice(0, 5);
+
+    return {
+        overview: {
+            totalCards: ownedCards.length,
+            totalValue,
+            totalCost,
+            profit,
+            profitPercent: totalCost > 0 ? (profit / totalCost) * 100 : 0,
+            avgGrade: Math.round(avgGrade * 10) / 10,
+            avgValue: Math.round(avgValue),
+            wishlistCount: cards.filter(c => c.is_wishlist).length
+        },
+        bySport,
+        byGrade,
+        byYear,
+        topCards,
+        recentCards
+    };
+}
+
+// Initial demo stats
+export const DEMO_STATS: CollectionStats = calculateDemoStats(DEMO_CARDS);
