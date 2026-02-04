@@ -1,19 +1,21 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Search, SlidersHorizontal, X } from 'lucide-react';
+import { Search, SlidersHorizontal, X, TestTube } from 'lucide-react';
 import api from '../services/api';
 import type { Card, CardFilters } from '../types';
 import CardGrid from '../components/CardGrid';
 import CardModal from '../components/CardModal';
 import FilterSheet from '../components/FilterSheet';
+import { useDemo } from '../context/DemoContext';
 
 export default function Gallery() {
     const [filters, setFilters] = useState<CardFilters>({});
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedCard, setSelectedCard] = useState<Card | null>(null);
     const [filterSheetOpen, setFilterSheetOpen] = useState(false);
+    const { isDemoMode, demoCards, disableDemoMode } = useDemo();
 
-    // Fetch cards
+    // Fetch cards (skip in demo mode)
     const { data, isLoading, error, refetch } = useQuery({
         queryKey: ['cards', filters, searchQuery],
         queryFn: async () => {
@@ -34,18 +36,70 @@ export default function Gallery() {
             const response = await api.get(`/api/cards?${params.toString()}`);
             return response.data;
         },
+        enabled: !isDemoMode, // Skip API call in demo mode
     });
 
-    // Fetch filter options
+    // Fetch filter options (skip in demo mode)
     const { data: filterOptions } = useQuery({
         queryKey: ['filterOptions'],
         queryFn: async () => {
             const response = await api.get('/api/cards/filters/options');
             return response.data;
         },
+        enabled: !isDemoMode,
     });
 
-    const cards = data?.cards || [];
+    // Get demo filter options
+    const demoFilterOptions = useMemo(() => {
+        if (!isDemoMode) return undefined;
+        const nonWishlistCards = demoCards.filter(c => !c.is_wishlist);
+        return {
+            sports: [...new Set(nonWishlistCards.map(c => c.sport))],
+            years: [...new Set(nonWishlistCards.map(c => c.year))].sort((a, b) => (b || 0) - (a || 0)),
+            teams: [...new Set(nonWishlistCards.map(c => c.team))].sort(),
+        };
+    }, [isDemoMode, demoCards]);
+
+    // Filter and sort demo cards
+    const filteredDemoCards = useMemo(() => {
+        if (!isDemoMode) return [];
+        let cards = demoCards.filter(c => !c.is_wishlist);
+
+        // Apply filters
+        if (filters.sport) cards = cards.filter(c => c.sport === filters.sport);
+        if (filters.year) cards = cards.filter(c => c.year === filters.year);
+        if (filters.team) cards = cards.filter(c => c.team === filters.team);
+        if (filters.gradeMin) cards = cards.filter(c => c.grade && c.grade >= filters.gradeMin!);
+        if (filters.gradeMax) cards = cards.filter(c => c.grade && c.grade <= filters.gradeMax!);
+        if (filters.valueMin) cards = cards.filter(c => c.value && c.value >= filters.valueMin!);
+        if (filters.valueMax) cards = cards.filter(c => c.value && c.value <= filters.valueMax!);
+        if (searchQuery) {
+            const query = searchQuery.toLowerCase();
+            cards = cards.filter(c =>
+                c.player_name.toLowerCase().includes(query) ||
+                c.team?.toLowerCase().includes(query) ||
+                c.card_set?.toLowerCase().includes(query)
+            );
+        }
+
+        // Sort
+        const sortBy = filters.sort || 'created_at';
+        const sortOrder = filters.order || 'desc';
+        cards.sort((a, b) => {
+            const aVal = a[sortBy as keyof Card];
+            const bVal = b[sortBy as keyof Card];
+            if (typeof aVal === 'string' && typeof bVal === 'string') {
+                return sortOrder === 'asc' ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
+            }
+            return sortOrder === 'asc'
+                ? ((aVal as number) || 0) - ((bVal as number) || 0)
+                : ((bVal as number) || 0) - ((aVal as number) || 0);
+        });
+
+        return cards;
+    }, [isDemoMode, demoCards, filters, searchQuery]);
+
+    const cards = isDemoMode ? filteredDemoCards : (data?.cards || []);
     const activeFilterCount = Object.values(filters).filter(Boolean).length;
 
     const clearFilters = () => {
@@ -55,6 +109,23 @@ export default function Gallery() {
 
     return (
         <div className="min-h-screen">
+            {/* Demo mode banner */}
+            {isDemoMode && (
+                <div className="bg-gradient-to-r from-shark-500 to-shark-600 text-white py-2 px-4">
+                    <div className="max-w-screen-xl mx-auto flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                            <TestTube className="w-4 h-4" />
+                            <span className="text-sm font-medium">Demo Mode - Viewing sample data</span>
+                        </div>
+                        <button
+                            onClick={disableDemoMode}
+                            className="text-xs px-3 py-1 bg-white/20 hover:bg-white/30 rounded-full transition-colors"
+                        >
+                            Exit Demo
+                        </button>
+                    </div>
+                </div>
+            )}
             {/* Search and filters bar */}
             <div className="sticky top-14 z-30 bg-ig-background border-b border-ig-border">
                 <div className="max-w-screen-xl mx-auto px-4 py-3">
@@ -134,9 +205,9 @@ export default function Gallery() {
 
             {/* Card grid */}
             <div className="max-w-screen-xl mx-auto px-4 py-4">
-                {isLoading ? (
+                {isLoading && !isDemoMode ? (
                     <CardGridSkeleton />
-                ) : error ? (
+                ) : error && !isDemoMode ? (
                     <div className="flex flex-col items-center justify-center py-20 text-center">
                         <p className="text-ig-text-secondary mb-4">Failed to load cards</p>
                         <button onClick={() => refetch()} className="btn-ig-primary">
@@ -170,7 +241,7 @@ export default function Gallery() {
                 onClose={() => setFilterSheetOpen(false)}
                 filters={filters}
                 onChange={setFilters}
-                options={filterOptions}
+                options={isDemoMode ? demoFilterOptions : filterOptions}
             />
         </div>
     );

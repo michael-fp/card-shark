@@ -1,6 +1,9 @@
 import { useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useDemo } from '../context/DemoContext';
 import { motion } from 'framer-motion';
+import { Play } from 'lucide-react';
 
 // Google Identity Services script
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
@@ -21,6 +24,8 @@ declare global {
 
 export default function Login() {
     const { login, isLoading } = useAuth();
+    const { enableDemoMode } = useDemo();
+    const navigate = useNavigate();
 
     const handleCredentialResponse = useCallback(
         async (response: { credential: string }) => {
@@ -130,6 +135,28 @@ export default function Login() {
                         Only authorized accounts can access CardShark.
                         <br />
                         Contact the admin if you need access.
+                    </p>
+                </motion.div>
+
+                {/* Demo Mode Button */}
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3 }}
+                    className="w-full max-w-sm mt-4"
+                >
+                    <button
+                        onClick={() => {
+                            enableDemoMode();
+                            navigate('/');
+                        }}
+                        className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-shark-500 to-shark-600 text-white font-medium flex items-center justify-center gap-2 hover:from-shark-600 hover:to-shark-700 transition-all shadow-lg"
+                    >
+                        <Play className="w-5 h-5" />
+                        Try Demo Mode
+                    </button>
+                    <p className="text-xs text-ig-text-muted text-center mt-2">
+                        Explore with sample card data
                     </p>
                 </motion.div>
 

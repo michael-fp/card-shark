@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { DemoProvider, useDemo } from './context/DemoContext';
 import Layout from './components/Layout';
 import Login from './pages/Login';
 import Gallery from './pages/Gallery';
@@ -17,11 +18,12 @@ const queryClient = new QueryClient({
   },
 });
 
-// Protected route wrapper
+// Protected route wrapper - allows access in demo mode
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, isLoading } = useAuth();
+  const { isDemoMode } = useDemo();
 
-  if (isLoading) {
+  if (isLoading && !isDemoMode) {
     return (
       <div className="min-h-screen bg-ig-background flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
@@ -32,7 +34,8 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
     );
   }
 
-  if (!isAuthenticated) {
+  // Allow access if authenticated OR in demo mode
+  if (!isAuthenticated && !isDemoMode) {
     return <Navigate to="/login" replace />;
   }
 
@@ -69,9 +72,11 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <BrowserRouter>
-          <AppRoutes />
-        </BrowserRouter>
+        <DemoProvider>
+          <BrowserRouter>
+            <AppRoutes />
+          </BrowserRouter>
+        </DemoProvider>
       </AuthProvider>
     </QueryClientProvider>
   );

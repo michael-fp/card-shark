@@ -3,14 +3,18 @@ import { TrendingUp, TrendingDown, Wallet, Star, Heart, BarChart3, AlertTriangle
 import api from '../services/api';
 import type { CollectionStats } from '../types';
 import { motion } from 'framer-motion';
+import { useDemo } from '../context/DemoContext';
 
 export default function Stats() {
+    const { isDemoMode, demoStats, demoUsage } = useDemo();
+
     const { data: stats, isLoading, error } = useQuery<CollectionStats>({
         queryKey: ['stats'],
         queryFn: async () => {
             const response = await api.get('/api/stats/overview');
             return response.data;
         },
+        enabled: !isDemoMode,
     });
 
     const { data: usage } = useQuery({
@@ -19,9 +23,14 @@ export default function Stats() {
             const response = await api.get('/api/stats/usage');
             return response.data;
         },
+        enabled: !isDemoMode,
     });
 
-    if (isLoading) {
+    // Use demo data in demo mode
+    const displayStats = isDemoMode ? demoStats : stats;
+    const displayUsage = isDemoMode ? demoUsage : usage;
+
+    if (isLoading && !isDemoMode) {
         return (
             <div className="max-w-screen-xl mx-auto px-4 py-6">
                 <h1 className="text-2xl font-bold text-ig-text mb-6">Collection Stats</h1>
@@ -38,7 +47,7 @@ export default function Stats() {
         );
     }
 
-    if (error || !stats) {
+    if ((error || !displayStats) && !isDemoMode) {
         return (
             <div className="flex flex-col items-center justify-center min-h-[60vh] text-center px-4">
                 <p className="text-ig-text-secondary mb-4">Failed to load stats</p>
@@ -47,7 +56,7 @@ export default function Stats() {
         );
     }
 
-    const { overview, bySport, byGrade, byYear, topCards } = stats;
+    const { overview, bySport, byGrade, byYear, topCards } = displayStats!;
 
     return (
         <div className="max-w-screen-xl mx-auto px-4 py-6 space-y-8">
@@ -92,7 +101,7 @@ export default function Stats() {
             </div>
 
             {/* Usage warnings */}
-            {usage && (usage.api?.approachingLimit || usage.storage?.warning) && (
+            {displayUsage && (displayUsage.api?.approachingLimit || displayUsage.storage?.warning) && (
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -103,11 +112,11 @@ export default function Stats() {
                         <div>
                             <p className="font-medium text-ig-warning">Usage Warning</p>
                             <ul className="text-sm text-ig-text-secondary mt-1 space-y-1">
-                                {usage.api?.approachingLimit && (
-                                    <li>• Vision API: {usage.api.used}/{usage.api.limit} calls this month</li>
+                                {displayUsage.api?.approachingLimit && (
+                                    <li>• Vision API: {displayUsage.api.used}/{displayUsage.api.limit} calls this month</li>
                                 )}
-                                {usage.storage?.warning && (
-                                    <li>• Storage: {(usage.storage.used / 1024 / 1024).toFixed(0)}MB / {(usage.storage.limit / 1024 / 1024).toFixed(0)}MB</li>
+                                {displayUsage.storage?.warning && (
+                                    <li>• Storage: {(displayUsage.storage.used / 1024 / 1024).toFixed(0)}MB / {(displayUsage.storage.limit / 1024 / 1024).toFixed(0)}MB</li>
                                 )}
                             </ul>
                         </div>

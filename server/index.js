@@ -12,6 +12,7 @@ import cardsRoutes from './routes/cards.js';
 import statsRoutes from './routes/stats.js';
 import alertsRoutes from './routes/alerts.js';
 import uploadRoutes from './routes/upload.js';
+import demoRoutes from './routes/demo.js';
 
 // Middleware
 import { errorHandler } from './middleware/errorHandler.js';
@@ -60,6 +61,7 @@ app.use('/api/cards', cardsRoutes);
 app.use('/api/stats', statsRoutes);
 app.use('/api/alerts', alertsRoutes);
 app.use('/api/upload', uploadRoutes);
+app.use('/api/demo', demoRoutes);
 
 // Error handling
 app.use(errorHandler);

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Heart } from 'lucide-react';
 import api from '../services/api';
@@ -6,9 +6,11 @@ import type { Card } from '../types';
 import CardGrid from '../components/CardGrid';
 import CardModal from '../components/CardModal';
 import { motion } from 'framer-motion';
+import { useDemo } from '../context/DemoContext';
 
 export default function Wishlist() {
     const [selectedCard, setSelectedCard] = useState<Card | null>(null);
+    const { isDemoMode, demoCards } = useDemo();
 
     const { data, isLoading, refetch } = useQuery({
         queryKey: ['wishlist'],
@@ -16,9 +18,16 @@ export default function Wishlist() {
             const response = await api.get('/api/cards?isWishlist=true');
             return response.data;
         },
+        enabled: !isDemoMode,
     });
 
-    const cards = data?.cards || [];
+    // Get wishlist cards in demo mode
+    const demoWishlistCards = useMemo(() => {
+        if (!isDemoMode) return [];
+        return demoCards.filter(c => c.is_wishlist);
+    }, [isDemoMode, demoCards]);
+
+    const cards = isDemoMode ? demoWishlistCards : (data?.cards || []);
 
     return (
         <div className="max-w-screen-xl mx-auto px-4 py-6">
@@ -32,7 +41,7 @@ export default function Wishlist() {
             </div>
 
             {/* Content */}
-            {isLoading ? (
+            {isLoading && !isDemoMode ? (
                 <div className="grid grid-cols-3 gap-1 sm:gap-2">
                     {Array.from({ length: 6 }).map((_, i) => (
                         <div key={i} className="aspect-square skeleton" />
