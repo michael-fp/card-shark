@@ -4,6 +4,8 @@ import { X, Heart, Edit, Trash2, Bell, ExternalLink } from 'lucide-react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '../services/api';
 import type { Card } from '../types';
+import EditCardForm from './EditCardForm';
+import { useDemo } from '../context/DemoContext';
 
 interface CardModalProps {
     card: Card;
@@ -12,10 +14,12 @@ interface CardModalProps {
 }
 
 export default function CardModal({ card, onClose, onUpdate }: CardModalProps) {
-    const [_isEditing, setIsEditing] = useState(false);
+    const [isEditing, setIsEditing] = useState(false);
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
     const queryClient = useQueryClient();
     const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+    useDemo(); // Called to ensure context is available
+    const isDemo = card.id.startsWith('demo-');
 
     // Delete mutation
     const deleteMutation = useMutation({
@@ -183,8 +187,13 @@ export default function CardModal({ card, onClose, onUpdate }: CardModalProps) {
                                 </button>
 
                                 <button
-                                    onClick={() => setIsEditing(true)}
-                                    className="p-2 rounded-lg bg-ig-surface text-ig-text-secondary hover:text-ig-text transition-colors"
+                                    onClick={() => !isDemo && setIsEditing(true)}
+                                    disabled={isDemo}
+                                    title={isDemo ? 'Demo cards cannot be edited' : 'Edit card'}
+                                    className={`p-2 rounded-lg bg-ig-surface transition-colors ${isDemo
+                                        ? 'text-ig-text-muted cursor-not-allowed opacity-50'
+                                        : 'text-ig-text-secondary hover:text-ig-text'
+                                        }`}
                                 >
                                     <Edit className="w-5 h-5" />
                                 </button>
@@ -241,6 +250,15 @@ export default function CardModal({ card, onClose, onUpdate }: CardModalProps) {
                     </motion.div>
                 )}
             </motion.div>
+
+            {/* Edit Form Modal */}
+            {isEditing && (
+                <EditCardForm
+                    card={card}
+                    onClose={() => setIsEditing(false)}
+                    onSuccess={onUpdate}
+                />
+            )}
         </AnimatePresence>
     );
 }

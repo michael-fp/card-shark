@@ -7,6 +7,7 @@ import Login from './pages/Login';
 import Gallery from './pages/Gallery';
 import Stats from './pages/Stats';
 import Wishlist from './pages/Wishlist';
+import Alerts from './pages/Alerts';
 import './index.css';
 
 const queryClient = new QueryClient({
@@ -62,6 +63,7 @@ function AppRoutes() {
         <Route index element={<Gallery />} />
         <Route path="stats" element={<Stats />} />
         <Route path="wishlist" element={<Wishlist />} />
+        <Route path="alerts" element={<Alerts />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
