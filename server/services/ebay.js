@@ -68,8 +68,43 @@ export const searchCards = async (parsedCardData) => {
     }
 
     try {
-        // Build search query from parsed data
-        let searchQuery = parsedCardData.searchQuery || '';
+        // Build clean search query from structured form fields only
+        // Avoid using raw searchQuery which has partial/redundant text
+        const queryParts = [];
+
+        // Year first (most specific)
+        if (parsedCardData.year) {
+            queryParts.push(parsedCardData.year);
+        }
+
+        // Player name (primary identifier)
+        if (parsedCardData.playerName) {
+            queryParts.push(parsedCardData.playerName);
+        }
+
+        // Grade (important for pricing)
+        if (parsedCardData.grade) {
+            // Format grade nicely - "10" becomes "10 GEM MT" for better matches
+            const grade = parseFloat(parsedCardData.grade);
+            if (grade === 10) {
+                queryParts.push('10 GEM MT');
+            } else if (grade >= 9) {
+                queryParts.push(`${parsedCardData.grade} MINT`);
+            } else {
+                queryParts.push(parsedCardData.grade);
+            }
+        }
+
+        // Brand/Set (e.g. "Donruss Magicians")
+        if (parsedCardData.brand) {
+            queryParts.push(parsedCardData.brand);
+        }
+        if (parsedCardData.cardSet && parsedCardData.cardSet !== parsedCardData.brand) {
+            queryParts.push(parsedCardData.cardSet);
+        }
+
+        // Build final query - deduplicated
+        const searchQuery = [...new Set(queryParts.map(p => String(p).trim()).filter(Boolean))].join(' ');
 
         // Add sport category filter
         const categoryMap = {
@@ -82,20 +117,7 @@ export const searchCards = async (parsedCardData) => {
 
         const categoryId = categoryMap[parsedCardData.sport] || '212'; // Default: Sports Trading Cards
 
-        // Add year to query if available
-        if (parsedCardData.year) {
-            searchQuery += ` ${parsedCardData.year}`;
-        }
-
-        // Add brand/set if available
-        if (parsedCardData.brand) {
-            searchQuery += ` ${parsedCardData.brand}`;
-        }
-        if (parsedCardData.cardSet) {
-            searchQuery += ` ${parsedCardData.cardSet}`;
-        }
-
-        console.log('🔍 eBay search query:', searchQuery.trim());
+        console.log('🔍 eBay search query:', searchQuery);
 
         const response = await axios.get(`${EBAY_API_URL}/item_summary/search`, {
             headers: {
