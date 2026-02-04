@@ -190,9 +190,13 @@ router.post('/image', upload.single('image'), asyncHandler(async (req, res) => {
         console.log('ℹ️ Card matching disabled (runMatching =', runMatching, ')');
     }
 
+    // Create base64 data URL for database storage (Railway filesystem is ephemeral)
+    const imageData = `data:image/webp;base64,${processedImage.toString('base64')}`;
+
     res.status(201).json({
         success: true,
         imagePath,
+        imageData, // Base64 for database storage
         imageSize: processedImage.length,
         storageWarning,
         match: matchResult,

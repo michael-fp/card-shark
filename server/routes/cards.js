@@ -149,6 +149,7 @@ router.post('/', asyncHandler(async (req, res) => {
     const { userId } = req.user;
     const {
         imagePath,
+        imageData, // Base64 encoded image for database storage
         description,
         sport,
         year,
@@ -184,12 +185,12 @@ router.post('/', asyncHandler(async (req, res) => {
 
     const result = await query(
         `INSERT INTO cards (
-      user_id, image_path, description, sport, year, player_name, team,
+      user_id, image_path, image_data, description, sport, year, player_name, team,
       card_number, card_set, grade, value, purchase_price, is_wishlist, ebay_item_id
-    ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
+    ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
     RETURNING *`,
         [
-            userId, imagePath, description, sport, year, playerName, team,
+            userId, imagePath, imageData || null, description, sport, year, playerName, team,
             cardNumber, cardSet, grade, value, purchasePrice, isWishlist, ebayItemId
         ]
     );

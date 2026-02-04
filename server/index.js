@@ -13,6 +13,7 @@ import statsRoutes from './routes/stats.js';
 import alertsRoutes from './routes/alerts.js';
 import uploadRoutes from './routes/upload.js';
 import demoRoutes from './routes/demo.js';
+import imagesRoutes from './routes/images.js';
 
 // Middleware
 import { errorHandler } from './middleware/errorHandler.js';
@@ -43,8 +44,11 @@ app.use(morgan('dev'));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// Serve uploaded images
+// Serve uploaded images - try filesystem first (for local dev), fallback to database (for Railway)
 app.use('/uploads', express.static(join(__dirname, 'uploads')));
+
+// Database-backed image serving (for when filesystem is ephemeral)
+app.use('/api/images', imagesRoutes);
 
 // Health check
 app.get('/health', (req, res) => {

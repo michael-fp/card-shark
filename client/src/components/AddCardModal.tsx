@@ -86,6 +86,7 @@ export default function AddCardModal({ isOpen, onClose }: AddCardModalProps) {
     const [step, setStep] = useState<Step>('upload');
     const [uploadedImage, setUploadedImage] = useState<string | null>(null);
     const [imagePath, setImagePath] = useState<string | null>(null);
+    const [imageData, setImageData] = useState<string | null>(null); // Base64 for database storage
     const [matchResult, setMatchResult] = useState<CardMatch | null>(null);
     const [formData, setFormData] = useState<Partial<CardFormData>>({});
     const [error, setError] = useState<string | null>(null);
@@ -107,6 +108,7 @@ export default function AddCardModal({ isOpen, onClose }: AddCardModalProps) {
         },
         onSuccess: (data) => {
             setImagePath(data.imagePath);
+            setImageData(data.imageData || null); // Store base64 for DB persistence
 
             if (data.match?.matched && data.match.matchedCard) {
                 setMatchResult(data.match);
@@ -147,7 +149,9 @@ export default function AddCardModal({ isOpen, onClose }: AddCardModalProps) {
     // Create card mutation
     const createMutation = useMutation({
         mutationFn: async (data: CardFormData) => {
-            const response = await api.post('/api/cards', data);
+            // Include imageData for database storage (Railway filesystem is ephemeral)
+            const payload = { ...data, imageData };
+            const response = await api.post('/api/cards', payload);
             return response.data;
         },
         onSuccess: () => {

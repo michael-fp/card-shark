@@ -163,6 +163,7 @@ export interface CardMatch {
 export interface UploadResponse {
     success: boolean;
     imagePath: string;
+    imageData?: string; // Base64 for database storage (Railway filesystem is ephemeral)
     imageSize: number;
     storageWarning: boolean;
     match: CardMatch | null;
