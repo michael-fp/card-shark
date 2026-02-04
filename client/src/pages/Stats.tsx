@@ -56,7 +56,21 @@ export default function Stats() {
         );
     }
 
-    const { overview, bySport, byGrade, byYear, topCards } = displayStats!;
+    const { overview = {} as any, bySort = [], byGrade = [], byYear = [], topCards = [] } = displayStats || {};
+    const bySport = bySort; // Alias for readability
+
+    // Safe defaults for overview
+    const safeOverview = {
+        totalValue: 0,
+        totalCost: 0,
+        profit: 0,
+        profitPercent: 0,
+        avgGrade: null,
+        avgValue: 0,
+        totalCards: 0,
+        wishlistCount: 0,
+        ...overview
+    };
 
     return (
         <div className="max-w-screen-xl mx-auto px-4 py-6 space-y-8">
@@ -71,30 +85,30 @@ export default function Stats() {
                 <StatCard
                     icon={<Wallet className="w-5 h-5" />}
                     label="Total Value"
-                    value={`$${(overview.totalValue || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}`}
+                    value={`$${(safeOverview.totalValue || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}`}
                     color="text-ig-primary"
                     delay={0}
                 />
                 <StatCard
-                    icon={overview.profit >= 0 ? <TrendingUp className="w-5 h-5" /> : <TrendingDown className="w-5 h-5" />}
+                    icon={safeOverview.profit >= 0 ? <TrendingUp className="w-5 h-5" /> : <TrendingDown className="w-5 h-5" />}
                     label="Profit/Loss"
-                    value={`${overview.profit >= 0 ? '+' : ''}$${Math.abs(overview.profit || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}`}
-                    subvalue={`${overview.profitPercent >= 0 ? '+' : ''}${(overview.profitPercent || 0).toFixed(1)}%`}
-                    color={overview.profit >= 0 ? 'text-ig-success' : 'text-ig-like'}
+                    value={`${safeOverview.profit >= 0 ? '+' : ''}$${Math.abs(safeOverview.profit || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}`}
+                    subvalue={`${safeOverview.profitPercent >= 0 ? '+' : ''}${(safeOverview.profitPercent || 0).toFixed(1)}%`}
+                    color={safeOverview.profit >= 0 ? 'text-ig-success' : 'text-ig-like'}
                     delay={0.05}
                 />
                 <StatCard
                     icon={<Star className="w-5 h-5" />}
                     label="Avg Grade"
-                    value={overview.avgGrade != null ? String(typeof overview.avgGrade === 'number' ? overview.avgGrade.toFixed(1) : overview.avgGrade) : '—'}
+                    value={safeOverview.avgGrade != null ? String(typeof safeOverview.avgGrade === 'number' ? safeOverview.avgGrade.toFixed(1) : safeOverview.avgGrade) : '—'}
                     color="text-amber-500"
                     delay={0.1}
                 />
                 <StatCard
                     icon={<Heart className="w-5 h-5" />}
                     label="Total Cards"
-                    value={overview.totalCards.toString()}
-                    subvalue={overview.wishlistCount > 0 ? `${overview.wishlistCount} wishlist` : undefined}
+                    value={safeOverview.totalCards.toString()}
+                    subvalue={safeOverview.wishlistCount > 0 ? `${safeOverview.wishlistCount} wishlist` : undefined}
                     color="text-ig-like"
                     delay={0.15}
                 />
@@ -148,7 +162,7 @@ export default function Stats() {
                                     <div className="h-2 bg-ig-elevated rounded-full overflow-hidden">
                                         <motion.div
                                             initial={{ width: 0 }}
-                                            animate={{ width: `${(item.count / overview.totalCards) * 100}%` }}
+                                            animate={{ width: `${(item.count / safeOverview.totalCards) * 100}%` }}
                                             transition={{ delay: 0.3 + i * 0.1, duration: 0.5 }}
                                             className="h-full bg-gradient-to-r from-ig-gradient-start to-ig-gradient-end rounded-full"
                                         />
