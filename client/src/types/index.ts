@@ -139,9 +139,12 @@ export interface CardMatch {
         ebayImageUrl: string;
     };
     extractedData: {
+        playerName?: string | null;
         sport: string;
+        team?: string | null;
         year: number | null;
         cardNumber: string | null;
+        grade?: number | null;
         brand: string | null;
         cardSet: string | null;
         rawText?: string;
