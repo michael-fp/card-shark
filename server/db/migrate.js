@@ -1,4 +1,4 @@
-import { readFileSync } from 'fs';
+import { readFileSync, readdirSync } from 'fs';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import pg from 'pg';
@@ -22,25 +22,45 @@ async function migrate() {
     const client = await pool.connect();
 
     try {
-        // Read migration file
-        const migrationPath = join(__dirname, 'migrations', '001_initial_schema.sql');
-        const sql = readFileSync(migrationPath, 'utf8');
+        // Get all migration files sorted by name
+        const migrationsDir = join(__dirname, 'migrations');
+        const migrationFiles = readdirSync(migrationsDir)
+            .filter(file => file.endsWith('.sql'))
+            .sort();
 
-        console.log('📄 Running 001_initial_schema.sql...');
+        console.log(`📄 Found ${migrationFiles.length} migration files\n`);
 
-        await client.query(sql);
+        // Run each migration
+        for (const file of migrationFiles) {
+            const migrationPath = join(migrationsDir, file);
+            const sql = readFileSync(migrationPath, 'utf8');
 
-        console.log('✅ Migration completed successfully!\n');
+            console.log(`⏳ Running ${file}...`);
+
+            try {
+                await client.query(sql);
+                console.log(`✅ ${file} completed`);
+            } catch (err) {
+                // Ignore "already exists" errors for idempotent migrations
+                if (err.message.includes('already exists') || err.message.includes('duplicate')) {
+                    console.log(`⏭️  ${file} skipped (already applied)`);
+                } else {
+                    throw err;
+                }
+            }
+        }
+
+        console.log('\n✅ All migrations completed successfully!\n');
 
         // List created tables
         const result = await client.query(`
-      SELECT table_name 
-      FROM information_schema.tables 
-      WHERE table_schema = 'public' 
-      ORDER BY table_name
-    `);
+            SELECT table_name 
+            FROM information_schema.tables 
+            WHERE table_schema = 'public' 
+            ORDER BY table_name
+        `);
 
-        console.log('📊 Tables created:');
+        console.log('📊 Tables in database:');
         result.rows.forEach(row => {
             console.log(`   • ${row.table_name}`);
         });
