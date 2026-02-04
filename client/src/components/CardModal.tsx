@@ -32,10 +32,10 @@ export default function CardModal({ card, onClose, onUpdate }: CardModalProps) {
         },
     });
 
-    // Toggle wishlist mutation
-    const wishlistMutation = useMutation({
+    // Toggle favorite mutation
+    const favoriteMutation = useMutation({
         mutationFn: async () => {
-            await api.put(`/api/cards/${card.id}`, { isWishlist: !card.is_wishlist });
+            await api.put(`/api/cards/${card.id}`, { isFavorite: !card.is_favorite });
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['cards'] });
@@ -176,14 +176,15 @@ export default function CardModal({ card, onClose, onUpdate }: CardModalProps) {
                         <div className="p-4 border-t border-ig-border">
                             <div className="flex items-center gap-3">
                                 <button
-                                    onClick={() => wishlistMutation.mutate()}
-                                    disabled={wishlistMutation.isPending}
-                                    className={`p-2 rounded-lg transition-colors ${card.is_wishlist
+                                    onClick={() => favoriteMutation.mutate()}
+                                    disabled={favoriteMutation.isPending}
+                                    className={`p-2 rounded-lg transition-colors ${card.is_favorite
                                         ? 'bg-ig-like/20 text-ig-like'
                                         : 'bg-ig-surface text-ig-text-secondary hover:text-ig-like'
                                         }`}
+                                    title={card.is_favorite ? 'Remove from favorites' : 'Add to favorites'}
                                 >
-                                    <Heart className={`w-5 h-5 ${card.is_wishlist ? 'fill-current' : ''}`} />
+                                    <Heart className={`w-5 h-5 ${card.is_favorite ? 'fill-current' : ''}`} />
                                 </button>
 
                                 <button

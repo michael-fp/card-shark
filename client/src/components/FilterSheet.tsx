@@ -198,6 +198,20 @@ export default function FilterSheet({ isOpen, onClose, filters, onChange, option
                                 </div>
                             </div>
 
+                            {/* Favorites Toggle */}
+                            <div>
+                                <label className="block text-sm font-medium text-ig-text mb-2">Favorites</label>
+                                <button
+                                    onClick={() => update('isFavorite', filters.isFavorite ? undefined : true)}
+                                    className={`px-4 py-2 rounded-full text-sm transition-colors ${filters.isFavorite
+                                        ? 'bg-ig-like text-white'
+                                        : 'bg-ig-surface text-ig-text-secondary hover:bg-ig-elevated'
+                                        }`}
+                                >
+                                    ❤️ Show Only Favorites
+                                </button>
+                            </div>
+
                             {/* Sort */}
                             <div>
                                 <label className="block text-sm font-medium text-ig-text mb-2">Sort By</label>

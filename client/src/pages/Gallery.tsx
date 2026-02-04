@@ -31,6 +31,7 @@ export default function Gallery() {
             if (filters.sort) params.append('sort', filters.sort);
             if (filters.order) params.append('order', filters.order);
             if (searchQuery) params.append('player', searchQuery);
+            if (filters.isFavorite) params.append('isFavorite', 'true');
             params.append('isWishlist', 'false');
 
             const response = await api.get(`/api/cards?${params.toString()}`);
@@ -73,6 +74,7 @@ export default function Gallery() {
         if (filters.gradeMax) cards = cards.filter(c => c.grade && c.grade <= filters.gradeMax!);
         if (filters.valueMin) cards = cards.filter(c => c.value && c.value >= filters.valueMin!);
         if (filters.valueMax) cards = cards.filter(c => c.value && c.value <= filters.valueMax!);
+        if (filters.isFavorite) cards = cards.filter(c => c.is_favorite);
         if (searchQuery) {
             const query = searchQuery.toLowerCase();
             cards = cards.filter(c =>
@@ -190,6 +192,12 @@ export default function Gallery() {
                                 <FilterChip
                                     label={`Grade: ${filters.gradeMin || 1}-${filters.gradeMax || 10}`}
                                     onRemove={() => setFilters({ ...filters, gradeMin: undefined, gradeMax: undefined })}
+                                />
+                            )}
+                            {filters.isFavorite && (
+                                <FilterChip
+                                    label="Favorites"
+                                    onRemove={() => setFilters({ ...filters, isFavorite: undefined })}
                                 />
                             )}
                             <button

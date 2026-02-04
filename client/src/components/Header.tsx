@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import { User, LogOut, BarChart3 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -21,24 +21,37 @@ export default function Header() {
 
                 {/* Desktop navigation */}
                 <nav className="hidden md:flex items-center gap-6">
-                    <Link
+                    <NavLink
                         to="/"
-                        className="text-ig-text-secondary hover:text-ig-text transition-colors"
+                        end
+                        className={({ isActive }) =>
+                            `transition-colors ${isActive
+                                ? 'text-ig-text font-medium'
+                                : 'text-ig-text-secondary hover:text-ig-text'}`
+                        }
                     >
                         Collection
-                    </Link>
-                    <Link
+                    </NavLink>
+                    <NavLink
                         to="/stats"
-                        className="text-ig-text-secondary hover:text-ig-text transition-colors"
+                        className={({ isActive }) =>
+                            `transition-colors ${isActive
+                                ? 'text-ig-text font-medium'
+                                : 'text-ig-text-secondary hover:text-ig-text'}`
+                        }
                     >
                         Stats
-                    </Link>
-                    <Link
+                    </NavLink>
+                    <NavLink
                         to="/wishlist"
-                        className="text-ig-text-secondary hover:text-ig-text transition-colors"
+                        className={({ isActive }) =>
+                            `transition-colors ${isActive
+                                ? 'text-ig-text font-medium'
+                                : 'text-ig-text-secondary hover:text-ig-text'}`
+                        }
                     >
                         Wishlist
-                    </Link>
+                    </NavLink>
                 </nav>
 
                 {/* User menu */}

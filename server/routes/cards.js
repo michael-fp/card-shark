@@ -24,6 +24,7 @@ router.get('/', asyncHandler(async (req, res) => {
         valueMin,
         valueMax,
         isWishlist,
+        isFavorite,
         sort = 'created_at',
         order = 'desc',
         limit = 50,
@@ -80,6 +81,11 @@ router.get('/', asyncHandler(async (req, res) => {
         params.push(isWishlist === 'true');
     }
 
+    if (isFavorite !== undefined) {
+        conditions.push(`is_favorite = $${paramIndex++}`);
+        params.push(isFavorite === 'true');
+    }
+
     // Validate sort column
     const allowedSorts = ['created_at', 'updated_at', 'player_name', 'value', 'grade', 'year'];
     const sortColumn = allowedSorts.includes(sort) ? sort : 'created_at';
@@ -92,7 +98,7 @@ router.get('/', asyncHandler(async (req, res) => {
     SELECT 
       id, image_path, description, sport, year, player_name, team,
       card_number, card_set, grade, value, purchase_price, 
-      is_wishlist, ebay_item_id, created_at, updated_at
+      is_wishlist, is_favorite, ebay_item_id, created_at, updated_at
     FROM cards
     WHERE ${conditions.join(' AND ')}
     ORDER BY ${sortColumn} ${sortOrder}
@@ -223,6 +229,7 @@ router.put('/:id', asyncHandler(async (req, res) => {
         value,
         purchasePrice,
         isWishlist,
+        isFavorite,
     } = req.body;
 
     // Check ownership
@@ -247,10 +254,11 @@ router.put('/:id', asyncHandler(async (req, res) => {
       grade = COALESCE($10, grade),
       value = COALESCE($11, value),
       purchase_price = COALESCE($12, purchase_price),
-      is_wishlist = COALESCE($13, is_wishlist)
+      is_wishlist = COALESCE($13, is_wishlist),
+      is_favorite = COALESCE($14, is_favorite)
     WHERE id = $1 AND user_id = $2
     RETURNING *`,
-        [id, userId, description, sport, year, playerName, team, cardNumber, cardSet, grade, value, purchasePrice, isWishlist]
+        [id, userId, description, sport, year, playerName, team, cardNumber, cardSet, grade, value, purchasePrice, isWishlist, isFavorite]
     );
 
     res.json({ card: result.rows[0] });

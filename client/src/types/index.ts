@@ -13,6 +13,7 @@ export interface Card {
     value: number | null;
     purchase_price: number | null;
     is_wishlist: boolean;
+    is_favorite: boolean;
     ebay_item_id: string | null;
     created_at: string;
     updated_at: string;
@@ -112,6 +113,7 @@ export interface CardFilters {
     valueMin?: number;
     valueMax?: number;
     isWishlist?: boolean;
+    isFavorite?: boolean;
     sort?: 'created_at' | 'updated_at' | 'player_name' | 'value' | 'grade' | 'year';
     order?: 'asc' | 'desc';
 }
