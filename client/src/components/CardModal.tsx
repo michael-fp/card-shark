@@ -132,7 +132,7 @@ export default function CardModal({ card, onClose, onUpdate }: CardModalProps) {
                                         {card.value && card.purchase_price && (
                                             <p className={`text-sm font-medium ${card.value > card.purchase_price ? 'text-ig-success' : 'text-ig-like'}`}>
                                                 {card.value > card.purchase_price ? '+' : ''}
-                                                {((card.value - card.purchase_price) / card.purchase_price * 100).toFixed(1)}%
+                                                {((Number(card.value) - Number(card.purchase_price)) / Number(card.purchase_price) * 100).toFixed(1)}%
                                             </p>
                                         )}
                                     </div>

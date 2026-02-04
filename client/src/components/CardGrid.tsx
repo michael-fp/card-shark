@@ -88,7 +88,7 @@ export default function CardGrid({ cards, onCardClick, pageSize = 12 }: CardGrid
                             <div className="text-center text-white">
                                 <p className="font-semibold text-sm line-clamp-1">{card.player_name}</p>
                                 {card.value && (
-                                    <p className="text-xs opacity-80">${card.value.toFixed(2)}</p>
+                                    <p className="text-xs opacity-80">${Number(card.value).toFixed(2)}</p>
                                 )}
                             </div>
                         </div>
