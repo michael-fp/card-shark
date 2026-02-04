@@ -14,6 +14,74 @@ type Step = 'upload' | 'matching' | 'form' | 'success';
 
 const SPORTS = ['Baseball', 'Basketball', 'Football', 'Hockey', 'Soccer'];
 
+// Comprehensive team lists (current + historical)
+const TEAMS_BY_SPORT: Record<string, string[]> = {
+    Basketball: [
+        // Current NBA Teams
+        'Atlanta Hawks', 'Boston Celtics', 'Brooklyn Nets', 'Charlotte Hornets', 'Chicago Bulls',
+        'Cleveland Cavaliers', 'Dallas Mavericks', 'Denver Nuggets', 'Detroit Pistons', 'Golden State Warriors',
+        'Houston Rockets', 'Indiana Pacers', 'LA Clippers', 'Los Angeles Lakers', 'Memphis Grizzlies',
+        'Miami Heat', 'Milwaukee Bucks', 'Minnesota Timberwolves', 'New Orleans Pelicans', 'New York Knicks',
+        'Oklahoma City Thunder', 'Orlando Magic', 'Philadelphia 76ers', 'Phoenix Suns', 'Portland Trail Blazers',
+        'Sacramento Kings', 'San Antonio Spurs', 'Toronto Raptors', 'Utah Jazz', 'Washington Wizards',
+        // Historical NBA Teams
+        'Seattle SuperSonics', 'Vancouver Grizzlies', 'New Jersey Nets', 'Charlotte Bobcats',
+        'San Diego Clippers', 'Buffalo Braves', 'Baltimore Bullets', 'Kansas City Kings',
+    ],
+    Football: [
+        // Current NFL Teams
+        'Arizona Cardinals', 'Atlanta Falcons', 'Baltimore Ravens', 'Buffalo Bills', 'Carolina Panthers',
+        'Chicago Bears', 'Cincinnati Bengals', 'Cleveland Browns', 'Dallas Cowboys', 'Denver Broncos',
+        'Detroit Lions', 'Green Bay Packers', 'Houston Texans', 'Indianapolis Colts', 'Jacksonville Jaguars',
+        'Kansas City Chiefs', 'Las Vegas Raiders', 'Los Angeles Chargers', 'Los Angeles Rams', 'Miami Dolphins',
+        'Minnesota Vikings', 'New England Patriots', 'New Orleans Saints', 'New York Giants', 'New York Jets',
+        'Philadelphia Eagles', 'Pittsburgh Steelers', 'San Francisco 49ers', 'Seattle Seahawks',
+        'Tampa Bay Buccaneers', 'Tennessee Titans', 'Washington Commanders',
+        // Historical NFL Teams
+        'Oakland Raiders', 'San Diego Chargers', 'St. Louis Rams', 'Houston Oilers', 'Baltimore Colts',
+        'Washington Redskins', 'Washington Football Team', 'St. Louis Cardinals', 'Phoenix Cardinals',
+    ],
+    Baseball: [
+        // Current MLB Teams
+        'Arizona Diamondbacks', 'Atlanta Braves', 'Baltimore Orioles', 'Boston Red Sox', 'Chicago Cubs',
+        'Chicago White Sox', 'Cincinnati Reds', 'Cleveland Guardians', 'Colorado Rockies', 'Detroit Tigers',
+        'Houston Astros', 'Kansas City Royals', 'Los Angeles Angels', 'Los Angeles Dodgers', 'Miami Marlins',
+        'Milwaukee Brewers', 'Minnesota Twins', 'New York Mets', 'New York Yankees', 'Oakland Athletics',
+        'Philadelphia Phillies', 'Pittsburgh Pirates', 'San Diego Padres', 'San Francisco Giants',
+        'Seattle Mariners', 'St. Louis Cardinals', 'Tampa Bay Rays', 'Texas Rangers', 'Toronto Blue Jays',
+        'Washington Nationals',
+        // Historical MLB Teams
+        'Montreal Expos', 'Florida Marlins', 'Cleveland Indians', 'Anaheim Angels', 'California Angels',
+        'Tampa Bay Devil Rays', 'Milwaukee Braves', 'Brooklyn Dodgers', 'New York Giants',
+    ],
+    Hockey: [
+        // Current NHL Teams
+        'Anaheim Ducks', 'Arizona Coyotes', 'Boston Bruins', 'Buffalo Sabres', 'Calgary Flames',
+        'Carolina Hurricanes', 'Chicago Blackhawks', 'Colorado Avalanche', 'Columbus Blue Jackets',
+        'Dallas Stars', 'Detroit Red Wings', 'Edmonton Oilers', 'Florida Panthers', 'Los Angeles Kings',
+        'Minnesota Wild', 'Montreal Canadiens', 'Nashville Predators', 'New Jersey Devils',
+        'New York Islanders', 'New York Rangers', 'Ottawa Senators', 'Philadelphia Flyers',
+        'Pittsburgh Penguins', 'San Jose Sharks', 'Seattle Kraken', 'St. Louis Blues',
+        'Tampa Bay Lightning', 'Toronto Maple Leafs', 'Utah Hockey Club', 'Vancouver Canucks',
+        'Vegas Golden Knights', 'Washington Capitals', 'Winnipeg Jets',
+        // Historical NHL Teams
+        'Hartford Whalers', 'Quebec Nordiques', 'Atlanta Thrashers', 'Minnesota North Stars',
+        'Phoenix Coyotes', 'Mighty Ducks of Anaheim',
+    ],
+    Soccer: [
+        // Major League Soccer (Current)
+        'Atlanta United', 'Austin FC', 'Charlotte FC', 'Chicago Fire', 'Colorado Rapids',
+        'Columbus Crew', 'D.C. United', 'FC Cincinnati', 'FC Dallas', 'Houston Dynamo',
+        'Inter Miami', 'LA Galaxy', 'LAFC', 'Minnesota United', 'Nashville SC',
+        'New England Revolution', 'New York City FC', 'New York Red Bulls', 'Orlando City',
+        'Philadelphia Union', 'Portland Timbers', 'Real Salt Lake', 'San Jose Earthquakes',
+        'Seattle Sounders', 'Sporting Kansas City', 'St. Louis City SC', 'Toronto FC', 'Vancouver Whitecaps',
+        // Top European Clubs
+        'Arsenal', 'Barcelona', 'Bayern Munich', 'Chelsea', 'Juventus', 'Liverpool',
+        'Manchester City', 'Manchester United', 'Paris Saint-Germain', 'Real Madrid',
+    ],
+};
+
 export default function AddCardModal({ isOpen, onClose }: AddCardModalProps) {
     const [step, setStep] = useState<Step>('upload');
     const [uploadedImage, setUploadedImage] = useState<string | null>(null);
@@ -276,7 +344,7 @@ export default function AddCardModal({ isOpen, onClose }: AddCardModalProps) {
                                         <label className="block text-sm text-ig-text-secondary mb-1">Sport *</label>
                                         <select
                                             value={formData.sport || ''}
-                                            onChange={(e) => setFormData({ ...formData, sport: e.target.value })}
+                                            onChange={(e) => setFormData({ ...formData, sport: e.target.value, team: undefined })}
                                             className="select-ig"
                                         >
                                             <option value="">Select sport</option>
@@ -299,13 +367,17 @@ export default function AddCardModal({ isOpen, onClose }: AddCardModalProps) {
 
                                     <div>
                                         <label className="block text-sm text-ig-text-secondary mb-1">Team</label>
-                                        <input
-                                            type="text"
+                                        <select
                                             value={formData.team || ''}
                                             onChange={(e) => setFormData({ ...formData, team: e.target.value })}
-                                            placeholder="e.g. Chiefs"
-                                            className="input-ig"
-                                        />
+                                            className="select-ig"
+                                            disabled={!formData.sport}
+                                        >
+                                            <option value="">{formData.sport ? 'Select team' : 'Select sport first'}</option>
+                                            {formData.sport && TEAMS_BY_SPORT[formData.sport]?.map((team) => (
+                                                <option key={team} value={team}>{team}</option>
+                                            ))}
+                                        </select>
                                     </div>
 
                                     <div>
