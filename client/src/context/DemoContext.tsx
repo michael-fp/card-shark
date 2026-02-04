@@ -62,6 +62,7 @@ export function DemoProvider({ children }: { children: ReactNode }) {
             value: card.value || null,
             purchase_price: card.purchase_price || null,
             is_wishlist: card.is_wishlist || false,
+            is_favorite: card.is_favorite || false,
             ebay_item_id: card.ebay_item_id || null,
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString(),

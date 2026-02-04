@@ -17,6 +17,7 @@ export const DEMO_CARDS: Card[] = [
         image_path: '/api/demo/images/mahomes.jpg',
         description: 'MVP Rookie Card - Gem Mint 10',
         is_wishlist: false,
+        is_favorite: false,
         ebay_item_id: null,
         created_at: '2024-01-15T12:00:00Z',
         updated_at: '2024-01-15T12:00:00Z'
@@ -35,6 +36,7 @@ export const DEMO_CARDS: Card[] = [
         image_path: '/api/demo/images/brady.jpg',
         description: 'Championship Ticket Auto RC - PSA 9',
         is_wishlist: false,
+        is_favorite: false,
         ebay_item_id: null,
         created_at: '2024-01-16T12:00:00Z',
         updated_at: '2024-01-16T12:00:00Z'
@@ -53,6 +55,7 @@ export const DEMO_CARDS: Card[] = [
         image_path: '/api/demo/images/burrow.jpg',
         description: 'Heisman Winner Mosaic Prizm - PSA 9.5',
         is_wishlist: false,
+        is_favorite: false,
         ebay_item_id: null,
         created_at: '2024-01-17T12:00:00Z',
         updated_at: '2024-01-17T12:00:00Z'
@@ -71,6 +74,7 @@ export const DEMO_CARDS: Card[] = [
         image_path: '/api/demo/images/kelce.jpg',
         description: 'Chrome Refractor RC - Gem Mint 10',
         is_wishlist: false,
+        is_favorite: false,
         ebay_item_id: null,
         created_at: '2024-02-01T12:00:00Z',
         updated_at: '2024-02-01T12:00:00Z'
@@ -91,6 +95,7 @@ export const DEMO_CARDS: Card[] = [
         image_path: '/api/demo/images/jordan.jpg',
         description: 'The GOAT Rookie Card - PSA 9',
         is_wishlist: false,
+        is_favorite: false,
         ebay_item_id: null,
         created_at: '2024-01-18T12:00:00Z',
         updated_at: '2024-01-18T12:00:00Z'
@@ -109,6 +114,7 @@ export const DEMO_CARDS: Card[] = [
         image_path: '/api/demo/images/lebron.jpg',
         description: 'Refractor Rookie Card - PSA 9.5',
         is_wishlist: false,
+        is_favorite: false,
         ebay_item_id: null,
         created_at: '2024-01-19T12:00:00Z',
         updated_at: '2024-01-19T12:00:00Z'
@@ -127,6 +133,7 @@ export const DEMO_CARDS: Card[] = [
         image_path: '/api/demo/images/curry.jpg',
         description: 'Patch Auto RC /99 - PSA 9',
         is_wishlist: false,
+        is_favorite: false,
         ebay_item_id: null,
         created_at: '2024-01-20T12:00:00Z',
         updated_at: '2024-01-20T12:00:00Z'
@@ -145,6 +152,7 @@ export const DEMO_CARDS: Card[] = [
         image_path: '/api/demo/images/wembanyama.jpg',
         description: 'Raw - To Be Graded',
         is_wishlist: false,
+        is_favorite: false,
         ebay_item_id: null,
         created_at: '2024-01-21T12:00:00Z',
         updated_at: '2024-01-21T12:00:00Z'
@@ -163,6 +171,7 @@ export const DEMO_CARDS: Card[] = [
         image_path: '/api/demo/images/tatum.jpg',
         description: 'Silver Prizm RC - PSA 9.5',
         is_wishlist: false,
+        is_favorite: false,
         ebay_item_id: null,
         created_at: '2024-02-02T12:00:00Z',
         updated_at: '2024-02-02T12:00:00Z'
@@ -183,6 +192,7 @@ export const DEMO_CARDS: Card[] = [
         image_path: '/api/demo/images/trout.jpg',
         description: 'Gem Mint 10 - Low Pop',
         is_wishlist: false,
+        is_favorite: false,
         ebay_item_id: null,
         created_at: '2024-01-22T12:00:00Z',
         updated_at: '2024-01-22T12:00:00Z'
@@ -201,6 +211,7 @@ export const DEMO_CARDS: Card[] = [
         image_path: '/api/demo/images/ohtani.jpg',
         description: 'Japanese Rising Star RC - PSA 9',
         is_wishlist: false,
+        is_favorite: false,
         ebay_item_id: null,
         created_at: '2024-01-23T12:00:00Z',
         updated_at: '2024-01-23T12:00:00Z'
@@ -219,6 +230,7 @@ export const DEMO_CARDS: Card[] = [
         image_path: '/api/demo/images/jeter.jpg',
         description: 'Captain Clutch Vintage RC - PSA 8.5',
         is_wishlist: false,
+        is_favorite: false,
         ebay_item_id: null,
         created_at: '2024-01-24T12:00:00Z',
         updated_at: '2024-01-24T12:00:00Z'
@@ -237,6 +249,7 @@ export const DEMO_CARDS: Card[] = [
         image_path: '/api/demo/images/acuna.jpg',
         description: 'Bat Down Photo Variation - PSA 9',
         is_wishlist: false,
+        is_favorite: false,
         ebay_item_id: null,
         created_at: '2024-02-03T12:00:00Z',
         updated_at: '2024-02-03T12:00:00Z'
@@ -257,6 +270,7 @@ export const DEMO_CARDS: Card[] = [
         image_path: '/api/demo/images/gretzky.jpg',
         description: 'The Great One - Vintage RC - PSA 7',
         is_wishlist: false,
+        is_favorite: false,
         ebay_item_id: null,
         created_at: '2024-01-25T12:00:00Z',
         updated_at: '2024-01-25T12:00:00Z'
@@ -275,6 +289,7 @@ export const DEMO_CARDS: Card[] = [
         image_path: '/api/demo/images/mcdavid.jpg',
         description: 'Young Guns RC - Gem Mint 10',
         is_wishlist: false,
+        is_favorite: false,
         ebay_item_id: null,
         created_at: '2024-01-26T12:00:00Z',
         updated_at: '2024-01-26T12:00:00Z'
@@ -293,6 +308,7 @@ export const DEMO_CARDS: Card[] = [
         image_path: '/api/demo/images/crosby.jpg',
         description: 'Sid the Kid Rookie - PSA 9',
         is_wishlist: false,
+        is_favorite: false,
         ebay_item_id: null,
         created_at: '2024-02-04T12:00:00Z',
         updated_at: '2024-02-04T12:00:00Z'
@@ -313,6 +329,7 @@ export const DEMO_CARDS: Card[] = [
         image_path: '',
         description: 'Target: PSA 10 Silver Prizm RC',
         is_wishlist: true,
+        is_favorite: false,
         ebay_item_id: null,
         created_at: '2024-01-27T12:00:00Z',
         updated_at: '2024-01-27T12:00:00Z'
@@ -331,6 +348,7 @@ export const DEMO_CARDS: Card[] = [
         image_path: '',
         description: 'The Kid - Looking for PSA 9+',
         is_wishlist: true,
+        is_favorite: false,
         ebay_item_id: null,
         created_at: '2024-01-28T12:00:00Z',
         updated_at: '2024-01-28T12:00:00Z'
