@@ -4,8 +4,6 @@ import { Bell, Plus, Trash2, TrendingUp, TrendingDown, DollarSign, AlertCircle, 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '../services/api';
 import type { Card } from '../types';
-import Header from '../components/Header';
-import BottomNav from '../components/BottomNav';
 import { useDemo } from '../context/DemoContext';
 
 interface PriceAlert {
@@ -164,8 +162,7 @@ export default function Alerts() {
     };
 
     return (
-        <div className="min-h-screen bg-ig-background pb-20">
-            <Header />
+        <div className="min-h-screen">
 
             {/* Demo Mode Banner */}
             {isDemoMode && (
@@ -428,8 +425,6 @@ export default function Alerts() {
                     </motion.div>
                 </motion.div>
             )}
-
-            <BottomNav />
         </div>
     );
 }
