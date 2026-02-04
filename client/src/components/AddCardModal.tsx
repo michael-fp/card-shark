@@ -112,16 +112,20 @@ export default function AddCardModal({ isOpen, onClose }: AddCardModalProps) {
 
             if (data.match?.matched && data.match.matchedCard) {
                 setMatchResult(data.match);
+                // Prefer Vision's extractedData for playerName, team, grade when available
+                const extracted = data.match.extractedData;
+                const matched = data.match.matchedCard;
                 setFormData({
                     imagePath: data.imagePath,
-                    playerName: data.match.matchedCard.playerName,
-                    sport: data.match.matchedCard.sport,
-                    year: data.match.matchedCard.year || undefined,
-                    team: data.match.matchedCard.team || undefined,
-                    cardNumber: data.match.matchedCard.cardNumber || undefined,
-                    cardSet: data.match.matchedCard.cardSet || undefined,
-                    value: data.match.matchedCard.value,
-                    ebayItemId: data.match.matchedCard.ebayItemId,
+                    playerName: matched.playerName || extracted?.playerName,
+                    sport: matched.sport,
+                    year: matched.year || undefined,
+                    team: matched.team || extracted?.team || undefined,
+                    cardNumber: matched.cardNumber || undefined,
+                    cardSet: matched.cardSet || undefined,
+                    value: matched.value,
+                    ebayItemId: matched.ebayItemId,
+                    grade: matched.grade || extracted?.grade || undefined,
                 });
             } else if (data.match?.extractedData) {
                 setMatchResult(data.match);

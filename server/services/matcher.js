@@ -110,12 +110,15 @@ export const matchCard = async (visionData, ebayResults) => {
         matched: isMatch,
         confidence,
         matchedCard: isMatch ? {
-            playerName: topMatch.playerName,
+            // Prefer Vision's playerName, fall back to eBay extraction
+            playerName: visionData.playerName || topMatch.playerName,
             sport: visionData.sport,
             year: visionData.year,
-            team: null, // Would need additional parsing
+            // Prefer Vision's team detection
+            team: visionData.team || null,
             cardNumber: visionData.cardNumber,
             cardSet: visionData.cardSet || visionData.brand,
+            grade: visionData.grade,
             value: topMatch.price,
             ebayItemId: topMatch.ebayItemId,
             ebayTitle: topMatch.title,
