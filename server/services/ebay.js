@@ -84,14 +84,14 @@ export const searchCards = async (parsedCardData) => {
 
         // Grade (important for pricing)
         if (parsedCardData.grade) {
-            // Format grade nicely - "10" becomes "10 GEM MT" for better matches
+            // Format grade with PSA prefix for better eBay matches
+            // Grade 10 = "PSA 10 GEM MT" (Gem Mint is highest standard)
+            // Other grades = "PSA {grade}"
             const grade = parseFloat(parsedCardData.grade);
             if (grade === 10) {
-                queryParts.push('10 GEM MT');
-            } else if (grade >= 9) {
-                queryParts.push(`${parsedCardData.grade} MINT`);
+                queryParts.push('PSA 10 GEM MT');
             } else {
-                queryParts.push(parsedCardData.grade);
+                queryParts.push(`PSA ${parsedCardData.grade}`);
             }
         }
 
